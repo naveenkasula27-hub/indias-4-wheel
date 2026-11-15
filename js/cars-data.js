@@ -125,7 +125,12 @@ async function loadCars() {
     if (!res.ok) throw new Error('api failed');
     const data = await res.json();
     if (!Array.isArray(data) || data.length === 0) throw new Error('empty');
-    return data.map(c => ({ ...c, id: c._id, interior: c.interior || c.photo }));
+    // Cars added without a photo borrow the matching static listing's image.
+    return data.map(c => {
+      const match = CARS.find(s => s.name === c.name) || CARS.find(s => s.brand === c.brand && s.bodyType === c.bodyType) || CARS[0];
+      const photo = c.photo || match.photo;
+      return { ...c, id: c._id, photo, interior: c.interior || match.interior || photo };
+    });
   } catch {
     return CARS;
   }
