@@ -1,0 +1,57 @@
+/* ============ Sell Car Flow ============ */
+
+.sell-hero{background:linear-gradient(120deg,var(--navy),var(--navy-light) 60%,var(--orange-dark));padding:56px 0 50px;color:#fff;}
+.sell-hero h1{color:#fff;font-size:30px;margin:8px 0 10px;}
+
+.sell-flow-wrap{max-width:720px;margin:0 auto;}
+
+.progress-row{display:flex;align-items:flex-start;justify-content:center;margin-bottom:34px;}
+.progress-step{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--slate-light);width:100px;text-align:center;flex-shrink:0;}
+.progress-dot{
+  width:34px;height:34px;border-radius:50%;background:var(--bg-alt);border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);color:var(--slate-light);
+}
+.progress-step.active .progress-dot{background:var(--orange);border-color:var(--orange);color:#fff;}
+.progress-step.active{color:var(--navy);}
+.progress-step.done .progress-dot{background:var(--emerald);border-color:var(--emerald);color:#fff;}
+.progress-line{flex:0 1 60px;height:2px;background:var(--line);margin-top:17px;}
+
+.sell-form-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-md);padding:36px;}
+.form-step{display:none;}
+.form-step.active{display:block;animation:fadeUp .4s ease;}
+.form-step h3{font-size:19px;margin-bottom:22px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px;}
+.form-grid .field label{display:block;font-size:12px;font-weight:600;color:var(--slate-light);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.form-grid .field input,.form-grid .field select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-family:var(--ff-body);color:var(--ink);background:#fcfcfe;
+}
+.form-grid .field input:focus,.form-grid .field select:focus{outline:none;border-color:var(--orange);}
+.form-grid .field.invalid input,.form-grid .field.invalid select{border-color:#e14343;}
+.form-btn-row{display:flex;gap:12px;justify-content:space-between;}
+.next-btn{width:100%;}
+.form-btn-row .next-btn{flex:1;}
+
+/* Quote result */
+.quote-result{text-align:center;}
+.quote-amount{font-size:40px;color:var(--navy);margin:4px 0 6px;}
+.quote-car-name{font-size:15px;color:var(--slate);margin-bottom:18px;font-weight:600;}
+.quote-badges{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.quote-badges span{background:var(--bg-alt);color:var(--emerald);font-weight:700;font-size:12px;padding:8px 14px;border-radius:999px;}
+.quote-note{font-size:13px;color:var(--slate-light);margin-bottom:26px;}
+.quote-note strong{color:var(--navy);}
+
+/* Confirmation */
+.confirm-box{text-align:center;padding:20px 0;}
+.confirm-tick{
+  width:64px;height:64px;border-radius:50%;background:var(--emerald);color:#fff;font-size:30px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 20px;
+}
+.confirm-box h3{margin-bottom:10px;}
+.confirm-box p{margin-bottom:24px;}
+
+@media (max-width:640px){
+  .sell-form-card{padding:24px;}
+  .form-grid{grid-template-columns:1fr;}
+  .progress-step{width:auto;font-size:11px;}
+  .progress-line{margin-top:-20px;max-width:40px;}
+}

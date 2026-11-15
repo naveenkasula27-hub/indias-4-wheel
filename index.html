@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India's 4 Wheel — Buy & Sell Used Cars, Trusted Across India</title>
+<meta name="description" content="India's 4 Wheel: buy and sell certified used cars with inspection, warranty, instant valuation and doorstep delivery across India.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="#top" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40">
+          <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="48" y2="48">
+              <stop offset="0" stop-color="#FF6A2B"/>
+              <stop offset="1" stop-color="#0B2A5B"/>
+            </linearGradient>
+          </defs>
+          <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+          <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/>
+          <circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+        </svg>
+      </span>
+      <span class="brand-text">India's<strong>4Wheel</strong></span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="inventory.html">Buy Car</a>
+      <a href="sell.html">Sell Car</a>
+      <a href="#how">How It Works</a>
+      <a href="#financing">Financing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="cityBtn">📍 Hyderabad</button>
+      <button class="btn btn-outline">Login</button>
+      <a class="btn btn-primary" href="sell.html">Sell Your Car</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero-carousel" id="heroCarousel">
+      <div class="hero-slide active" style="background-image:url('https://images.pexels.com/photos/37955325/pexels-photo-37955325.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.pexels.com/photos/17183439/pexels-photo-17183439.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+      <div class="hero-slide" style="background-image:url('https://images.pexels.com/photos/39487229/pexels-photo-39487229.jpeg?auto=compress&cs=tinysrgb&w=1600')"></div>
+    </div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="container hero-content">
+      <p class="eyebrow fade-up">BUY · SELL · DRIVE HOME TODAY</p>
+      <h1 class="fade-up delay-1">India's most trusted way to<br> <span class="accent">buy &amp; sell</span> your next car</h1>
+      <p class="hero-sub fade-up delay-2">200-point inspected cars, instant online valuation, doorstep delivery and a 5-day money-back guarantee — all across India.</p>
+
+      <!-- Search / Buy-Sell toggle card -->
+      <div class="search-card fade-up delay-3">
+        <div class="search-tabs">
+          <button class="tab-btn active" data-tab="buy">Buy a Car</button>
+          <button class="tab-btn" data-tab="sell">Sell your Car</button>
+        </div>
+
+        <div class="search-panel active" data-panel="buy">
+          <div class="search-row">
+            <div class="field">
+              <label>City</label>
+              <select>
+                <option>Hyderabad</option>
+                <option>Delhi NCR</option>
+                <option>Mumbai</option>
+                <option>Bengaluru</option>
+                <option>Chennai</option>
+                <option>Pune</option>
+                <option>Kolkata</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Brand &amp; Model</label>
+              <input type="text" placeholder="e.g. Hyundai Creta">
+            </div>
+            <div class="field">
+              <label>Budget</label>
+              <select>
+                <option>Under ₹5 Lakh</option>
+                <option>₹5 – 10 Lakh</option>
+                <option>₹10 – 15 Lakh</option>
+                <option>₹15 Lakh+</option>
+              </select>
+            </div>
+            <button class="btn btn-primary search-btn">Search Cars</button>
+          </div>
+        </div>
+
+        <div class="search-panel" data-panel="sell">
+          <div class="search-row">
+            <div class="field">
+              <label>Car Brand</label>
+              <select>
+                <option>Maruti Suzuki</option>
+                <option>Hyundai</option>
+                <option>Tata</option>
+                <option>Honda</option>
+                <option>Mahindra</option>
+                <option>Kia</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Registration Number</label>
+              <input type="text" placeholder="e.g. TS09 AB 1234">
+            </div>
+            <div class="field">
+              <label>City</label>
+              <select>
+                <option>Hyderabad</option>
+                <option>Delhi NCR</option>
+                <option>Mumbai</option>
+              </select>
+            </div>
+            <a class="btn btn-primary search-btn" href="sell.html">Get Instant Quote</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stats fade-up delay-4">
+        <div class="stat"><span class="counter" data-target="250000">0</span><small>Cars Sold</small></div>
+        <div class="stat"><span class="counter" data-target="120">0</span><small>Cities</small></div>
+        <div class="stat"><span class="counter" data-target="98">0</span><small>% Happy Customers</small></div>
+        <div class="stat"><span class="counter" data-target="200">0</span><small>Point Inspection</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TRUST STRIP ============ -->
+  <section class="trust-strip">
+    <div class="container trust-grid">
+      <div class="trust-item"><span class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5-5" stroke-linecap="round"/></svg></span><div><strong>200-Point Inspection</strong><p>Every car checked bumper to bumper</p></div></div>
+      <div class="trust-item"><span class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke-linejoin="round"/></svg></span><div><strong>1-Year Warranty</strong><p>Comprehensive coverage included</p></div></div>
+      <div class="trust-item"><span class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10a9 9 0 1 1 2.6 6.3" stroke-linecap="round"/><path d="M3 4v6h6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>5-Day Money Back</strong><p>No questions asked guarantee</p></div></div>
+      <div class="trust-item"><span class="trust-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg></span><div><strong>Doorstep Delivery</strong><p>RC transfer &amp; paperwork handled</p></div></div>
+    </div>
+  </section>
+
+  <!-- ============ BUY CARS CAROUSEL ============ -->
+  <section class="section" id="buy">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="tag">Explore Inventory</p>
+          <h2>Certified cars, ready to drive home</h2>
+        </div>
+        <div class="carousel-nav">
+          <a href="inventory.html" class="btn btn-outline" style="margin-right:10px;">View All Cars</a>
+          <button class="car-arrow" data-dir="-1" data-target="carGrid">‹</button>
+          <button class="car-arrow" data-dir="1" data-target="carGrid">›</button>
+        </div>
+      </div>
+
+      <div class="car-filters">
+        <button class="chip active">All Cars</button>
+        <button class="chip">Hatchback</button>
+        <button class="chip">Sedan</button>
+        <button class="chip">SUV</button>
+        <button class="chip">Electric</button>
+        <button class="chip">Under ₹5L</button>
+      </div>
+
+      <div class="car-track" id="carGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ SELL YOUR CAR ============ -->
+  <section class="section section-alt" id="sell">
+    <div class="container sell-grid">
+      <div class="sell-copy fade-up">
+        <p class="tag">Sell with Confidence</p>
+        <h2>Sell your car in 3 simple steps —<br> best price, zero hassle</h2>
+        <div class="step-list">
+          <div class="step"><span class="step-num">1</span><div><strong>Get Instant Quote</strong><p>Share your car details online or on call and get a fair, data-backed price instantly.</p></div></div>
+          <div class="step"><span class="step-num">2</span><div><strong>Free Inspection</strong><p>Our expert visits your location for a quick, free, 30-minute evaluation.</p></div></div>
+          <div class="step"><span class="step-num">3</span><div><strong>Instant Payment</strong><p>Accept the offer and get paid directly to your bank account the same day.</p></div></div>
+        </div>
+        <a class="btn btn-primary btn-lg" href="sell.html">Get My Car's Price</a>
+      </div>
+      <div class="sell-visual fade-up delay-2">
+        <div class="sell-card">
+          <p class="sell-card-label">Estimated Value</p>
+          <h3 class="sell-price">₹ 7,82,000</h3>
+          <p class="sell-car-name">Hyundai Creta SX (O) 2021</p>
+          <div class="sell-bar"><span style="width:86%"></span></div>
+          <p class="sell-note">Based on 12,400+ similar cars sold this month</p>
+        </div>
+        <div class="sell-badge badge-1">✔ Free RC Transfer</div>
+        <div class="sell-badge badge-2">⚡ Payment in 24 hrs</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-head center">
+        <p class="tag">How It Works</p>
+        <h2>From search to steering wheel, in days — not weeks</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-card fade-up"><div class="how-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="6"/><path d="M20 20l-5-5" stroke-linecap="round"/></svg></div><h4>Browse &amp; Shortlist</h4><p>20,000+ inspected cars with 360° view, detailed photos &amp; history reports.</p></div>
+        <div class="how-card fade-up delay-1"><div class="how-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13l1.5-5A2 2 0 0 1 6.4 7h11.2a2 2 0 0 1 1.9 1.4L21 13v5H3z"/><path d="M3 13h18M7 17.5h.01M17 17.5h.01"/></svg></div><h4>Book a Test Drive</h4><p>At your home or a nearby India's 4 Wheel hub — your choice, your time.</p></div>
+        <div class="how-card fade-up delay-2"><div class="how-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18" stroke-linecap="round"/></svg></div><h4>Pay Securely Online</h4><p>Flexible loan options starting at 9.9% interest, approved in minutes.</p></div>
+        <div class="how-card fade-up delay-3"><div class="how-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" stroke-linejoin="round"/></svg></div><h4>Doorstep Delivery</h4><p>We handle RC transfer &amp; paperwork. Your car arrives, ready to drive.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BODY TYPE EXPLORER ============ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div><p class="tag">Explore by Body Type</p><h2>Find the shape that fits your life</h2></div>
+      </div>
+      <div class="body-grid">
+        <div class="body-card fade-up"><img src="https://images.pexels.com/photos/39487229/pexels-photo-39487229.jpeg?auto=compress&cs=tinysrgb&w=300" alt="SUV" loading="lazy"><span>SUV</span></div>
+        <div class="body-card fade-up delay-1"><img src="https://images.pexels.com/photos/38883321/pexels-photo-38883321.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Sedan" loading="lazy"><span>Sedan</span></div>
+        <div class="body-card fade-up delay-2"><img src="https://images.pexels.com/photos/17059960/pexels-photo-17059960.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Hatchback" loading="lazy"><span>Hatchback</span></div>
+        <div class="body-card fade-up delay-3"><img src="https://images.pexels.com/photos/15812680/pexels-photo-15812680.jpeg?auto=compress&cs=tinysrgb&w=300" alt="MUV" loading="lazy"><span>MUV</span></div>
+        <div class="body-card fade-up delay-4"><img src="https://images.pexels.com/photos/24376862/pexels-photo-24376862.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Electric" loading="lazy"><span>Electric</span></div>
+        <div class="body-card fade-up delay-5"><img src="https://images.pexels.com/photos/31698472/pexels-photo-31698472.jpeg?auto=compress&cs=tinysrgb&w=300" alt="Luxury" loading="lazy"><span>Luxury</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINANCING ============ -->
+  <section class="section" id="financing">
+    <div class="container financing-grid">
+      <div class="fin-copy fade-up">
+        <p class="tag">Finance &amp; Insurance</p>
+        <h2>Drive today, pay comfortably — financing made for India</h2>
+        <ul class="fin-list">
+          <li>✔ Loans starting at <strong>9.9% interest</strong>, from 30+ partner banks</li>
+          <li>✔ Instant eligibility &amp; e-KYC approval in minutes</li>
+          <li>✔ Car insurance with zero-depreciation add-on</li>
+          <li>✔ Challan check &amp; FASTag recharge, all in one app</li>
+        </ul>
+        <button class="btn btn-outline">Check Loan Eligibility</button>
+      </div>
+      <div class="fin-visual fade-up delay-2">
+        <div class="emi-card">
+          <p class="sell-card-label">EMI Calculator</p>
+          <div class="emi-row"><span>Car Price</span><strong>₹ 8,50,000</strong></div>
+          <div class="emi-row"><span>Down Payment</span><strong>₹ 1,50,000</strong></div>
+          <div class="emi-row"><span>Tenure</span><strong>60 months</strong></div>
+          <div class="emi-total">Monthly EMI <strong>₹ 14,980</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS CAROUSEL ============ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head center">
+        <p class="tag">What Motivates Us</p>
+        <h2>Real stories from real owners, across India</h2>
+      </div>
+      <div class="testi-wrap">
+        <button class="testi-arrow left" id="testiPrev">‹</button>
+        <div class="testi-track" id="testiTrack">
+          <div class="testi-card"><div class="testi-avatar">RA</div><p>"Buying was quick, transparent and stress-free. The inspection report gave me full confidence before paying a rupee."</p><strong>Ramesh Agrawal</strong><small>Bought a used car · Hyderabad</small></div>
+          <div class="testi-card"><div class="testi-avatar">VD</div><p>"Sold my car in under a week, smooth process end-to-end. Got a better price than any local dealer offered."</p><strong>Varun Deo</strong><small>Sold a car · Pune</small></div>
+          <div class="testi-card"><div class="testi-avatar">GJ</div><p>"The relationship manager explained every feature clearly. No pressure, just honest, helpful guidance."</p><strong>Gajender Joshi</strong><small>Bought inspection report · Jaipur</small></div>
+          <div class="testi-card"><div class="testi-avatar">MS</div><p>"We wanted a family SUV within budget — India's 4 Wheel found us exactly that, delivered to our doorstep."</p><strong>Madhulika Singh</strong><small>Bought a used car · Lucknow</small></div>
+          <div class="testi-card"><div class="testi-avatar">AS</div><p>"First car, first time buyer — the whole team made it simple and the 5-day guarantee removed all my doubts."</p><strong>Ayush Srivastava</strong><small>Bought a used car · Chennai</small></div>
+        </div>
+        <button class="testi-arrow right" id="testiNext">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APP DOWNLOAD BANNER ============ -->
+  <section class="app-banner">
+    <div class="container app-banner-inner">
+      <div class="fade-up">
+        <p class="tag light">Download the App</p>
+        <h2>Everything your car needs — now in one app</h2>
+        <p class="hero-sub light">Buy, sell, finance, insure and manage your vehicle, wherever you are.</p>
+        <div class="store-badges">
+          <span class="store-btn">▶ Google Play</span>
+          <span class="store-btn">🍎 App Store</span>
+        </div>
+      </div>
+      <div class="app-phone fade-up delay-2" aria-hidden="true">
+        <img src="https://images.pexels.com/photos/31698472/pexels-photo-31698472.jpeg?auto=compress&cs=tinysrgb&w=400" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="container faq-wrap">
+      <div class="section-head center"><p class="tag">FAQ</p><h2>Frequently asked questions</h2></div>
+      <div class="accordion" id="accordion">
+        <div class="acc-item active">
+          <button class="acc-head">When and where can I book a test drive? <span>+</span></button>
+          <div class="acc-body"><p>You can schedule a free test drive at your home or at your nearest India's 4 Wheel hub directly from the website or app. Our relationship manager will confirm the time before arriving.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head">How does the 5-day money-back guarantee work? <span>+</span></button>
+          <div class="acc-body"><p>If you're not fully satisfied within 5 days of delivery, return the car for a full refund — no questions asked, subject to standard terms.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head">Will India's 4 Wheel help me with car finance? <span>+</span></button>
+          <div class="acc-body"><p>Yes — we partner with 30+ banks and NBFCs to offer instant loan approval starting at 9.9% interest, with minimal paperwork.</p></div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-head">What's the process for selling my car? <span>+</span></button>
+          <div class="acc-body"><p>Get an instant online quote, book a free 30-minute inspection at your location, accept the final offer, and receive payment the same day.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="#top" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <circle cx="24" cy="24" r="22" fill="url(#g2)"/>
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+            <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+            <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+          </svg>
+        </span>
+        <span class="brand-text light">India's<strong>4Wheel</strong></span>
+      </a>
+      <p>India's trusted platform to buy and sell certified used cars — inspected, warrantied, delivered to your door.</p>
+      <div class="social-row">
+        <a href="#" aria-label="Instagram">IG</a>
+        <a href="#" aria-label="Facebook">FB</a>
+        <a href="#" aria-label="YouTube">YT</a>
+        <a href="#" aria-label="LinkedIn">IN</a>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Careers</a><a href="#">Press Kit</a><a href="#">Blog</a></div>
+    <div class="footer-col"><h5>Discover</h5><a href="inventory.html">Buy a used car</a><a href="sell.html">Sell a used car</a><a href="#financing">Get a car loan</a><a href="#">Car insurance</a></div>
+    <div class="footer-col"><h5>Help &amp; Support</h5><a href="#faq">FAQs</a><a href="#">Contact Us</a><a href="#">Become a Partner</a><a href="#">Terms &amp; Conditions</a></div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 India's 4 Wheel. All rights reserved.</p>
+    <p>Build · Grow · Drive — crafted with pride for every Indian road.</p>
+  </div>
+</footer>
+
+<script src="js/cars-data.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

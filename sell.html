@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sell Your Car — Get an Instant Quote | India's 4 Wheel</title>
+<meta name="description" content="Sell your car in 3 simple steps on India's 4 Wheel. Get an instant online quote, free inspection, and same-day payment.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/inventory.css">
+<link rel="stylesheet" href="css/sell-flow.css">
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40">
+          <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+          <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+          <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+        </svg>
+      </span>
+      <span class="brand-text">India's<strong>4Wheel</strong></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="inventory.html">Buy Car</a>
+      <a href="sell.html" class="active-link">Sell Car</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="index.html#financing">Financing</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="cityBtn">📍 Hyderabad</button>
+      <button class="btn btn-outline">Login</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="sell-hero">
+    <div class="container">
+      <p class="tag light">Sell With Confidence</p>
+      <h1>Sell your car in 3 simple steps</h1>
+      <p class="hero-sub light" style="margin:0;">Instant price, free inspection, same-day payment — no haggling, no hidden fees.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sell-flow-wrap">
+
+      <!-- Progress -->
+      <div class="progress-row">
+        <div class="progress-step active" data-step="1"><span class="progress-dot">1</span>Car Details</div>
+        <div class="progress-line"></div>
+        <div class="progress-step" data-step="2"><span class="progress-dot">2</span>Your Info</div>
+        <div class="progress-line"></div>
+        <div class="progress-step" data-step="3"><span class="progress-dot">3</span>Your Quote</div>
+      </div>
+
+      <form id="sellForm" class="sell-form-card">
+
+        <!-- STEP 1 -->
+        <div class="form-step active" data-step="1">
+          <h3>Tell us about your car</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Brand</label>
+              <select id="fBrand" required>
+                <option value="">Select brand</option>
+                <option>Maruti Suzuki</option><option>Hyundai</option><option>Tata</option>
+                <option>Honda</option><option>Mahindra</option><option>Kia</option><option>Toyota</option><option>MG</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Model</label>
+              <input type="text" id="fModel" placeholder="e.g. Swift, Creta, Nexon" required>
+            </div>
+            <div class="field">
+              <label>Year of Purchase</label>
+              <select id="fYear" required>
+                <option value="">Select year</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>KM Driven</label>
+              <input type="number" id="fKm" placeholder="e.g. 32000" required min="0">
+            </div>
+            <div class="field">
+              <label>Fuel Type</label>
+              <select id="fFuel" required>
+                <option value="">Select fuel</option>
+                <option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>City</label>
+              <select id="fCity" required>
+                <option value="">Select city</option>
+                <option>Hyderabad</option><option>Delhi NCR</option><option>Mumbai</option>
+                <option>Bengaluru</option><option>Chennai</option><option>Pune</option><option>Kolkata</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-lg next-btn" data-next="2">Continue</button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="form-step" data-step="2">
+          <h3>How should we reach you?</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" id="fName" placeholder="Your name" required>
+            </div>
+            <div class="field">
+              <label>Mobile Number</label>
+              <input type="tel" id="fPhone" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+            </div>
+            <div class="field" style="grid-column:1/-1;">
+              <label>Email (optional)</label>
+              <input type="email" id="fEmail" placeholder="you@example.com">
+            </div>
+          </div>
+          <div class="form-btn-row">
+            <button type="button" class="btn btn-outline back-btn" data-back="1">Back</button>
+            <button type="button" class="btn btn-primary btn-lg next-btn" data-next="3">Get My Instant Quote</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="form-step" data-step="3">
+          <div class="quote-result">
+            <p class="sell-card-label" style="color:var(--slate-light);">Your Estimated Price</p>
+            <h2 class="quote-amount" id="quoteAmount">₹ 0</h2>
+            <p class="quote-car-name" id="quoteCarName"></p>
+            <div class="quote-badges">
+              <span>✔ Free RC Transfer</span>
+              <span>✔ Payment in 24 hrs</span>
+              <span>✔ No Hidden Fees</span>
+            </div>
+            <p class="quote-note">This is an indicative online estimate for <strong id="quoteCityName"></strong>. Final price is confirmed after a free 30-minute inspection at your location.</p>
+            <div class="form-btn-row">
+              <button type="button" class="btn btn-outline back-btn" data-back="2">Edit Details</button>
+              <button type="submit" class="btn btn-primary btn-lg">Book Free Inspection</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONFIRMATION -->
+        <div class="form-step" data-step="4">
+          <div class="confirm-box">
+            <div class="confirm-tick">✓</div>
+            <h3>Inspection Booked!</h3>
+            <p id="confirmMsg">We'll call you within 30 minutes to schedule a free inspection at your location.</p>
+            <a href="index.html" class="btn btn-primary btn-lg">Back to Home</a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <circle cx="24" cy="24" r="22" fill="url(#g2)"/>
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+            <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+            <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+          </svg>
+        </span>
+        <span class="brand-text light">India's<strong>4Wheel</strong></span>
+      </a>
+      <p>India's trusted platform to buy and sell certified used cars — inspected, warrantied, delivered to your door.</p>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a></div>
+    <div class="footer-col"><h5>Discover</h5><a href="inventory.html">Buy a used car</a><a href="sell.html">Sell a used car</a></div>
+    <div class="footer-col"><h5>Help</h5><a href="index.html#faq">FAQs</a><a href="#">Contact Us</a></div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 India's 4 Wheel. All rights reserved.</p>
+    <p>Build · Grow · Drive — crafted with pride for every Indian road.</p>
+  </div>
+</footer>
+
+<script src="js/sell-flow.js"></script>
+</body>
+</html>

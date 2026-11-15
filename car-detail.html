@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Car Details — India's 4 Wheel</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/inventory.css">
+<link rel="stylesheet" href="css/detail.css">
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40">
+          <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+          <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+          <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+        </svg>
+      </span>
+      <span class="brand-text">India's<strong>4Wheel</strong></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="inventory.html" class="active-link">Buy Car</a>
+      <a href="index.html#sell">Sell Car</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="index.html#financing">Financing</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <button class="btn btn-ghost" id="cityBtn">📍 Hyderabad</button>
+      <button class="btn btn-outline">Login</button>
+      <button class="btn btn-primary">Sell Your Car</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <p class="inv-breadcrumb" style="margin-top:20px;color:var(--slate-light);">
+      <a href="index.html" style="color:var(--slate);">Home</a> / <a href="inventory.html" style="color:var(--slate);">Buy a Car</a> / <span id="breadcrumbName" style="color:var(--navy);font-weight:600;"></span>
+    </p>
+  </div>
+
+  <!-- ============ DETAIL HERO ============ -->
+  <section class="detail-section">
+    <div class="container detail-grid">
+
+      <!-- Gallery -->
+      <div class="gallery">
+        <div class="gallery-main">
+          <span class="car-badge" id="detailBadge"></span>
+          <img id="mainPhoto" src="" alt="">
+        </div>
+        <div class="gallery-thumbs" id="thumbRow"></div>
+      </div>
+
+      <!-- Buy box -->
+      <div class="buy-box">
+        <p class="tag" id="detailBrandTag"></p>
+        <h1 id="detailName"></h1>
+        <p class="detail-meta" id="detailMeta"></p>
+
+        <div class="detail-price-row">
+          <div>
+            <p class="sell-card-label" style="color:var(--slate-light);">Price</p>
+            <h2 class="detail-price" id="detailPrice"></h2>
+          </div>
+          <div>
+            <p class="sell-card-label" style="color:var(--slate-light);">EMI</p>
+            <h3 class="detail-emi" id="detailEmi"></h3>
+          </div>
+        </div>
+
+        <div class="detail-cta-row">
+          <button class="btn btn-primary btn-lg" style="flex:1;">Book Test Drive</button>
+          <button class="btn btn-outline btn-lg" style="flex:1;">Get Loan Offer</button>
+        </div>
+
+        <div class="trust-mini">
+          <span>✔ 200-Point Inspected</span>
+          <span>✔ 1-Year Warranty</span>
+          <span>✔ 5-Day Money Back</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SPECS ============ -->
+  <section class="section" style="padding-top:0;">
+    <div class="container detail-lower-grid">
+      <div class="specs-col">
+        <h3 class="sub-head">Car Overview</h3>
+        <div class="specs-grid" id="specsGrid"></div>
+
+        <h3 class="sub-head" style="margin-top:40px;">Inspection Highlights</h3>
+        <div class="inspection-grid">
+          <div class="insp-item">✔ Engine &amp; transmission checked</div>
+          <div class="insp-item">✔ No major accident history</div>
+          <div class="insp-item">✔ AC, electricals &amp; battery tested</div>
+          <div class="insp-item">✔ Tyres &amp; brakes verified</div>
+          <div class="insp-item">✔ Paint &amp; body condition rated</div>
+          <div class="insp-item">✔ RC, insurance &amp; documents verified</div>
+        </div>
+
+        <h3 class="sub-head" style="margin-top:40px;">Similar Cars</h3>
+        <div class="car-track" id="similarGrid"></div>
+      </div>
+
+      <div class="emi-col">
+        <div class="emi-card">
+          <p class="sell-card-label">EMI Calculator</p>
+          <div class="emi-row"><span>Car Price</span><strong id="emiPrice">—</strong></div>
+          <div class="emi-row"><span>Down Payment (20%)</span><strong id="emiDown">—</strong></div>
+          <div class="emi-row"><span>Tenure</span><strong>60 months</strong></div>
+          <div class="emi-total">Monthly EMI <strong id="emiMonthly">—</strong></div>
+        </div>
+
+        <div class="seller-card">
+          <p class="sell-card-label" style="color:var(--slate-light);">Sold &amp; Delivered By</p>
+          <h4>India's 4 Wheel Certified Hub</h4>
+          <p class="seller-sub">RC transfer, insurance &amp; paperwork fully handled by our team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <circle cx="24" cy="24" r="22" fill="url(#g2)"/>
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+            <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+            <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+          </svg>
+        </span>
+        <span class="brand-text light">India's<strong>4Wheel</strong></span>
+      </a>
+      <p>India's trusted platform to buy and sell certified used cars — inspected, warrantied, delivered to your door.</p>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a></div>
+    <div class="footer-col"><h5>Discover</h5><a href="inventory.html">Buy a used car</a><a href="index.html#sell">Sell a used car</a></div>
+    <div class="footer-col"><h5>Help</h5><a href="index.html#faq">FAQs</a><a href="#">Contact Us</a></div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 India's 4 Wheel. All rights reserved.</p>
+    <p>Build · Grow · Drive — crafted with pride for every Indian road.</p>
+  </div>
+</footer>
+
+<script src="js/cars-data.js"></script>
+<script src="js/detail.js"></script>
+</body>
+</html>
