@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const cardHtml = (c) => `
     <a class="car-card" href="car-detail.html?id=${c.id}">
       <div class="car-media">
+        <button class="save-car-btn" data-car-id="${c.id}" aria-label="Save car">♡</button>
         <span class="car-badge">${c.badge}</span>
         <span class="car-fuel">${c.fuel}</span>
         <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
@@ -67,6 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     grid.innerHTML = results.map(cardHtml).join('');
     grid.style.display = results.length ? 'grid' : 'none';
     emptyEl.style.display = results.length ? 'none' : 'block';
+    window.i4wInitSaveButtons?.(grid);
   }
 
   [searchInput, filterBody, filterFuel, filterBrand, filterPrice, sortBy].forEach(el => {

@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       carGrid.innerHTML = cars.slice(0, 8).map(c => `
         <a class="car-card" href="car-detail.html?id=${c.id}">
           <div class="car-media">
+            <button class="save-car-btn" data-car-id="${c.id}" aria-label="Save car">♡</button>
             <span class="car-badge">${c.badge}</span>
             <span class="car-fuel">${c.fuel}</span>
             <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </a>
       `).join('');
+      window.i4wInitSaveButtons?.(carGrid);
     });
   }
 

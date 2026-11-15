@@ -6,5 +6,3 @@
 .account-form h3{margin:0 0 18px;}
 .account-form .field{margin-bottom:14px;}
 .admin-topbar-row{display:flex;justify-content:space-between;align-items:center;}
-.save-car-btn{position:absolute;top:12px;right:12px;background:#fff;border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(11,42,91,0.15);z-index:2;font-size:17px;}
-.save-car-btn.active{color:#e14343;}
