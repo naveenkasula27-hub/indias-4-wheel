@@ -1,6 +1,6 @@
 // ============ INVENTORY / BROWSE PAGE ============
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const grid = document.getElementById('invGrid');
   const countEl = document.getElementById('resultCount');
   const emptyEl = document.getElementById('emptyState');
@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const filterBrand = document.getElementById('filterBrand');
   const filterPrice = document.getElementById('filterPrice');
   const sortBy = document.getElementById('sortBy');
+
+  const CARS = await loadCars();
 
   // Populate brand filter dynamically
   const brands = [...new Set(CARS.map(c => c.brand))].sort();

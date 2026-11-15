@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Dashboard — India's 4 Wheel</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="brand">India's 4Wheel · Owner</div>
+      <nav>
+        <a href="#inventory" class="nav-link active" data-tab="inventory">Manage Inventory</a>
+        <a href="#leads" class="nav-link" data-tab="leads">Sell-Car Leads</a>
+      </nav>
+      <button class="logout-btn" id="logoutBtn">Log Out</button>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-topbar">
+        <h1 id="pageTitle">Manage Inventory</h1>
+        <span id="adminName" style="color:var(--slate-light);font-size:14px;"></span>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-num" id="statCars">—</div><div class="stat-label">Cars Listed</div></div>
+        <div class="stat-card"><div class="stat-num" id="statSold">—</div><div class="stat-label">Marked Sold</div></div>
+        <div class="stat-card"><div class="stat-num" id="statLeads">—</div><div class="stat-label">Total Leads</div></div>
+        <div class="stat-card"><div class="stat-num" id="statNewLeads">—</div><div class="stat-label">New Leads</div></div>
+      </div>
+
+      <!-- INVENTORY TAB -->
+      <section id="tab-inventory">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Add a Car</h3></div>
+          <div class="add-car-form">
+            <input id="newName" placeholder="Display name e.g. Hyundai Creta SX(O)">
+            <input id="newBrand" placeholder="Brand">
+            <input id="newModel" placeholder="Model">
+            <select id="newBodyType">
+              <option>SUV</option><option>Sedan</option><option>Hatchback</option><option>Electric</option><option>MUV</option>
+            </select>
+            <select id="newFuel"><option>Petrol</option><option>Diesel</option><option>Electric</option><option>CNG</option></select>
+            <select id="newTransmission"><option>Manual</option><option>Automatic</option></select>
+            <input id="newYear" type="number" placeholder="Year">
+            <input id="newKm" type="number" placeholder="KM driven">
+            <input id="newCity" placeholder="City">
+            <input id="newPrice" type="number" placeholder="Price (₹)">
+            <input id="newEmi" type="number" placeholder="EMI/mo (₹)">
+            <input id="newPhoto" placeholder="Photo URL (optional)">
+          </div>
+          <button class="btn-admin-primary" id="addCarBtn" style="width:auto;padding:10px 22px;">+ Add Car</button>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>All Listings</h3></div>
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Price (₹)</th><th>EMI/mo</th><th>KM</th><th>Status</th><th></th></tr></thead>
+            <tbody id="carsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- LEADS TAB -->
+      <section id="tab-leads" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Sell-Car Submissions</h3></div>
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Car</th><th>Valuation</th><th>Loan Eligible</th><th>Status</th><th></th></tr></thead>
+            <tbody id="leadsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

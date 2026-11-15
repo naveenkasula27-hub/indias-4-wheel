@@ -1,8 +1,9 @@
 // ============ CAR DETAIL PAGE ============
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
-  const car = getCarById(params.get('id')) || CARS[0];
+  const CARS = await loadCars();
+  const car = CARS.find(c => c.id === params.get('id')) || CARS[0];
 
   document.getElementById('pageTitle').textContent = `${car.name} — India's 4 Wheel`;
   document.getElementById('breadcrumbName').textContent = car.name;

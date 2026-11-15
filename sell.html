@@ -62,7 +62,9 @@
         <div class="progress-line"></div>
         <div class="progress-step" data-step="2"><span class="progress-dot">2</span>Your Info</div>
         <div class="progress-line"></div>
-        <div class="progress-step" data-step="3"><span class="progress-dot">3</span>Your Quote</div>
+        <div class="progress-step" data-step="3"><span class="progress-dot">3</span>Loan Check</div>
+        <div class="progress-line"></div>
+        <div class="progress-step" data-step="4"><span class="progress-dot">4</span>Your Quote</div>
       </div>
 
       <form id="sellForm" class="sell-form-card">
@@ -75,13 +77,14 @@
               <label>Brand</label>
               <select id="fBrand" required>
                 <option value="">Select brand</option>
-                <option>Maruti Suzuki</option><option>Hyundai</option><option>Tata</option>
-                <option>Honda</option><option>Mahindra</option><option>Kia</option><option>Toyota</option><option>MG</option>
               </select>
             </div>
             <div class="field">
               <label>Model</label>
-              <input type="text" id="fModel" placeholder="e.g. Swift, Creta, Nexon" required>
+              <select id="fModel" required>
+                <option value="">Select brand first</option>
+              </select>
+              <input type="text" id="fModelOther" placeholder="Model not listed? Type it here" style="display:none;margin-top:8px;">
             </div>
             <div class="field">
               <label>Year of Purchase</label>
@@ -98,6 +101,15 @@
               <select id="fFuel" required>
                 <option value="">Select fuel</option>
                 <option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Number of Owners</label>
+              <select id="fOwners" required>
+                <option value="1">1st Owner</option>
+                <option value="2">2nd Owner</option>
+                <option value="3">3rd Owner</option>
+                <option value="4">4th Owner or more</option>
               </select>
             </div>
             <div class="field">
@@ -131,15 +143,53 @@
           </div>
           <div class="form-btn-row">
             <button type="button" class="btn btn-outline back-btn" data-back="1">Back</button>
-            <button type="button" class="btn btn-primary btn-lg next-btn" data-next="3">Get My Instant Quote</button>
+            <button type="button" class="btn btn-primary btn-lg next-btn" data-next="3">Continue</button>
           </div>
         </div>
 
-        <!-- STEP 3 -->
+        <!-- STEP 3: LOAN ELIGIBILITY (optional) -->
         <div class="form-step" data-step="3">
+          <h3>Want to check loan eligibility on your next car?</h3>
+          <p class="hero-sub" style="margin:0 0 18px;color:var(--slate);">Optional — skip if you just want your car's valuation.</p>
+          <div class="form-grid">
+            <div class="field">
+              <label>Monthly Income (₹)</label>
+              <input type="number" id="lIncome" placeholder="e.g. 60000" min="0">
+            </div>
+            <div class="field">
+              <label>Existing Monthly EMIs (₹)</label>
+              <input type="number" id="lExistingEmi" placeholder="e.g. 5000" min="0" value="0">
+            </div>
+            <div class="field">
+              <label>Employment Type</label>
+              <select id="lEmployment">
+                <option value="salaried">Salaried</option>
+                <option value="self-employed">Self-Employed</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Credit Score Band</label>
+              <select id="lCreditBand">
+                <option value="750+">750+</option>
+                <option value="700-749">700 – 749</option>
+                <option value="650-699">650 – 699</option>
+                <option value="below-650">Below 650</option>
+                <option value="no-history">No Credit History</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-btn-row">
+            <button type="button" class="btn btn-outline back-btn" data-back="2">Back</button>
+            <button type="button" class="btn btn-primary btn-lg next-btn" data-next="4">Get My Instant Quote</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="form-step" data-step="4">
           <div class="quote-result">
             <p class="sell-card-label" style="color:var(--slate-light);">Your Estimated Price</p>
             <h2 class="quote-amount" id="quoteAmount">₹ 0</h2>
+            <p class="quote-range" id="quoteRange" style="color:var(--slate-light);font-size:14px;margin:4px 0 0;"></p>
             <p class="quote-car-name" id="quoteCarName"></p>
             <div class="quote-badges">
               <span>✔ Free RC Transfer</span>
@@ -147,15 +197,21 @@
               <span>✔ No Hidden Fees</span>
             </div>
             <p class="quote-note">This is an indicative online estimate for <strong id="quoteCityName"></strong>. Final price is confirmed after a free 30-minute inspection at your location.</p>
+
+            <div id="loanEligBox" style="display:none;margin-top:18px;padding:16px;background:#F4F6FA;border-radius:10px;text-align:left;">
+              <p class="sell-card-label" style="color:var(--slate-light);margin:0 0 8px;">Loan Eligibility (on your next car)</p>
+              <p id="loanEligText" style="margin:0;font-size:14px;"></p>
+            </div>
+
             <div class="form-btn-row">
-              <button type="button" class="btn btn-outline back-btn" data-back="2">Edit Details</button>
+              <button type="button" class="btn btn-outline back-btn" data-back="3">Edit Details</button>
               <button type="submit" class="btn btn-primary btn-lg">Book Free Inspection</button>
             </div>
           </div>
         </div>
 
         <!-- CONFIRMATION -->
-        <div class="form-step" data-step="4">
+        <div class="form-step" data-step="5">
           <div class="confirm-box">
             <div class="confirm-tick">✓</div>
             <h3>Inspection Booked!</h3>
@@ -196,6 +252,7 @@
   </div>
 </footer>
 
+<script src="admin/config.js"></script>
 <script src="js/sell-flow.js"></script>
 </body>
 </html>

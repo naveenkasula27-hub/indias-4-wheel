@@ -114,3 +114,19 @@ const formatPrice = (n) => n >= 100000 ? `₹ ${(n / 100000).toFixed(1)} Lakh` :
 const formatKm = (n) => `${n.toLocaleString('en-IN')} km`;
 const formatEmi = (n) => `EMI from ₹${n.toLocaleString('en-IN')}/mo`;
 const getCarById = (id) => CARS.find(c => c.id === id);
+
+// Fetches live inventory from the owner-managed backend (admin/config.js -> API_BASE).
+// Falls back to the static CARS array above if the API is unreachable, so the
+// site always renders even before the backend is deployed.
+async function loadCars() {
+  try {
+    if (typeof API_BASE === 'undefined') throw new Error('no api base');
+    const res = await fetch(`${API_BASE}/cars`);
+    if (!res.ok) throw new Error('api failed');
+    const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error('empty');
+    return data.map(c => ({ ...c, id: c._id, interior: c.interior || c.photo }));
+  } catch {
+    return CARS;
+  }
+}

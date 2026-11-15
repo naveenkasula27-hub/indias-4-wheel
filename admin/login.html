@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Login — India's 4 Wheel</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-login-body">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 48 48" width="44" height="44">
+        <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+        <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+        <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+      </svg>
+    </div>
+    <h1>Owner Dashboard</h1>
+    <p class="login-sub">India's 4 Wheel — admin access only</p>
+
+    <form id="loginForm">
+      <label>Email
+        <input type="email" id="email" required placeholder="owner@indias4wheel.com">
+      </label>
+      <label>Password
+        <input type="password" id="password" required placeholder="••••••••">
+      </label>
+      <p class="login-error" id="loginError" style="display:none;"></p>
+      <button type="submit" class="btn-admin-primary">Log In</button>
+    </form>
+  </div>
+  <script src="config.js"></script>
+  <script src="admin-login.js"></script>
+</body>
+</html>

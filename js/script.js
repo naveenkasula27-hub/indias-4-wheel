@@ -68,27 +68,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { threshold: 0.15 });
   revealEls.forEach(el => revealObserver.observe(el));
 
-  /* ---------- Build car inventory cards (real photos, Indian market) ---------- */
+  /* ---------- Build car inventory cards (live from owner dashboard, real photos) ---------- */
   const carGrid = document.getElementById('carGrid');
-  if (carGrid && typeof CARS !== 'undefined') {
-    carGrid.innerHTML = CARS.slice(0, 8).map(c => `
-      <a class="car-card" href="car-detail.html?id=${c.id}">
-        <div class="car-media">
-          <span class="car-badge">${c.badge}</span>
-          <span class="car-fuel">${c.fuel}</span>
-          <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
-        </div>
-        <div class="car-body">
-          <h4>${c.name}</h4>
-          <p class="car-meta">${c.year} · ${formatKm(c.km)} · ${c.fuel}</p>
-          <div class="car-price-row">
-            <span class="car-price">${formatPrice(c.price)}</span>
-            <span class="car-emi">${formatEmi(c.emi)}</span>
+  if (carGrid && typeof loadCars === 'function') {
+    loadCars().then(cars => {
+      carGrid.innerHTML = cars.slice(0, 8).map(c => `
+        <a class="car-card" href="car-detail.html?id=${c.id}">
+          <div class="car-media">
+            <span class="car-badge">${c.badge}</span>
+            <span class="car-fuel">${c.fuel}</span>
+            <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
           </div>
-          <span class="car-cta">View Details</span>
-        </div>
-      </a>
-    `).join('');
+          <div class="car-body">
+            <h4>${c.name}</h4>
+            <p class="car-meta">${c.year} · ${formatKm(c.km)} · ${c.fuel}</p>
+            <div class="car-price-row">
+              <span class="car-price">${formatPrice(c.price)}</span>
+              <span class="car-emi">${formatEmi(c.emi)}</span>
+            </div>
+            <span class="car-cta">View Details</span>
+          </div>
+        </a>
+      `).join('');
+    });
   }
 
   /* ---------- Generic horizontal-scroll arrow buttons ---------- */
