@@ -52,24 +52,37 @@ function fallbackLoanEligibility({ carPrice, monthlyIncome, existingEmis = 0, em
   return { eligibleAmount, interestRate, emi, tenureMonths };
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
   const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
 
-  // --- Populate brand dropdown ---
+  // --- Populate brand dropdown: full catalog from the backend, fallback to local list ---
   const brandSelect = document.getElementById('fBrand');
-  Object.keys(FALLBACK_CATALOG).sort().forEach(b => {
-    const opt = document.createElement('option');
-    opt.textContent = b;
-    brandSelect.appendChild(opt);
-  });
+  let brandList = Object.keys(FALLBACK_CATALOG).sort();
+  try {
+    if (!apiBase) throw new Error('no api');
+    const res = await fetch(`${apiBase}/valuation/catalog/brands`);
+    if (!res.ok) throw new Error('api failed');
+    const apiBrands = await res.json();
+    if (Array.isArray(apiBrands) && apiBrands.length) brandList = apiBrands;
+  } catch { /* use local fallback list */ }
+
+  brandSelect.innerHTML = '<option value="">Select brand</option>' +
+    brandList.map(b => `<option>${b}</option>`).join('');
 
   // --- Model dropdown depends on brand ---
   const modelSelect = document.getElementById('fModel');
   const modelOtherInput = document.getElementById('fModelOther');
-  brandSelect.addEventListener('change', () => {
+  brandSelect.addEventListener('change', async () => {
     const brand = brandSelect.value;
-    const models = FALLBACK_CATALOG[brand]?.models || [];
+    let models = FALLBACK_CATALOG[brand]?.models || [];
+    try {
+      if (!apiBase) throw new Error('no api');
+      const res = await fetch(`${apiBase}/valuation/catalog/models/${encodeURIComponent(brand)}`);
+      if (!res.ok) throw new Error('api failed');
+      const apiModels = await res.json();
+      if (Array.isArray(apiModels) && apiModels.length) models = apiModels;
+    } catch { /* use local fallback list */ }
     modelSelect.innerHTML = '<option value="">Select model</option>' +
       models.map(m => `<option>${m}</option>`).join('') +
       '<option value="__other__">Other / not listed</option>';

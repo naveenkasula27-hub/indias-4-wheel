@@ -37,8 +37,10 @@
       <a href="index.html#faq">FAQ</a>
     </nav>
     <div class="header-actions">
-      <button class="btn btn-ghost" id="cityBtn">📍 Hyderabad</button>
-      <button class="btn btn-outline">Login</button>
+      <select class="btn btn-ghost city-select" id="cityBtn">
+        <option>Hyderabad</option><option>Delhi NCR</option><option>Mumbai</option><option>Bengaluru</option><option>Chennai</option><option>Pune</option><option>Kolkata</option>
+      </select>
+      <a id="headerLoginLink" class="btn btn-outline" href="account.html">Login</a>
       <button class="btn btn-primary">Sell Your Car</button>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
     </div>
@@ -83,14 +85,31 @@
         </div>
 
         <div class="detail-cta-row">
-          <button class="btn btn-primary btn-lg" style="flex:1;">Book Test Drive</button>
-          <button class="btn btn-outline btn-lg" style="flex:1;">Get Loan Offer</button>
+          <button class="btn btn-primary btn-lg" style="flex:1;" id="bookTestDriveBtn">Book Test Drive</button>
+          <a href="loan.html" class="btn btn-outline btn-lg" style="flex:1;" id="getLoanOfferLink">Get Loan Offer</a>
+        </div>
+        <div class="detail-cta-row" style="margin-top:10px;">
+          <button class="btn btn-outline" style="flex:1;" id="saveCarBtn">♡ Save</button>
+          <button class="btn btn-outline" style="flex:1;" id="shareCarBtn">⤴ Share</button>
         </div>
 
         <div class="trust-mini">
           <span>✔ 200-Point Inspected</span>
           <span>✔ 1-Year Warranty</span>
           <span>✔ 5-Day Money Back</span>
+        </div>
+      </div>
+
+      <!-- Test drive modal -->
+      <div id="testDriveModal" class="td-modal-overlay" style="display:none;">
+        <div class="td-modal">
+          <button class="td-modal-close" id="closeTdModal">×</button>
+          <h3>Book a Free Test Drive</h3>
+          <p class="hero-sub" style="margin:0 0 16px;color:var(--slate);" id="tdCarName"></p>
+          <div class="field"><label>Your Name</label><input type="text" id="tdName" required></div>
+          <div class="field"><label>Mobile Number</label><input type="tel" id="tdPhone" pattern="[0-9]{10}" placeholder="10-digit mobile number" required></div>
+          <p id="tdMsg" style="font-size:13px;margin:8px 0;"></p>
+          <button class="btn btn-primary btn-lg" style="width:100%;" id="tdSubmitBtn">Request Test Drive</button>
         </div>
       </div>
     </div>
@@ -121,8 +140,18 @@
         <div class="emi-card">
           <p class="sell-card-label">EMI Calculator</p>
           <div class="emi-row"><span>Car Price</span><strong id="emiPrice">—</strong></div>
-          <div class="emi-row"><span>Down Payment (20%)</span><strong id="emiDown">—</strong></div>
-          <div class="emi-row"><span>Tenure</span><strong>60 months</strong></div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Down Payment</span><strong id="emiDownLabel">—</strong></div>
+            <input type="range" id="emiDownSlider" min="0" max="80" value="20" step="5">
+          </div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Interest Rate</span><strong id="emiRateLabel">9.5%</strong></div>
+            <input type="range" id="emiRateSlider" min="7" max="16" value="9.5" step="0.5">
+          </div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Tenure</span><strong id="emiTenureLabel">60 months</strong></div>
+            <input type="range" id="emiTenureSlider" min="12" max="84" value="60" step="12">
+          </div>
           <div class="emi-total">Monthly EMI <strong id="emiMonthly">—</strong></div>
         </div>
 
@@ -165,6 +194,7 @@
 </footer>
 
 <script src="admin/config.js"></script>
+<script src="js/account-session.js"></script>
 <script src="js/cars-data.js"></script>
 <script src="js/detail.js"></script>
 </body>

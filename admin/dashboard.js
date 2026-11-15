@@ -20,15 +20,19 @@ async function api(path, opts = {}) {
 }
 
 // --- Tabs ---
+const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', pricing: 'Valuation Pricing', account: 'Account' };
 document.querySelectorAll('.nav-link').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
     link.classList.add('active');
     const tab = link.dataset.tab;
-    document.getElementById('tab-inventory').style.display = tab === 'inventory' ? 'block' : 'none';
-    document.getElementById('tab-leads').style.display = tab === 'leads' ? 'block' : 'none';
-    document.getElementById('pageTitle').textContent = tab === 'inventory' ? 'Manage Inventory' : 'Sell-Car Leads';
+    ['inventory', 'leads', 'testdrives', 'pricing', 'account'].forEach((t) => {
+      document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
+    });
+    document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
+    if (tab === 'pricing') loadPricing();
+    if (tab === 'testdrives') loadTestDrives();
   });
 });
 
@@ -127,7 +131,10 @@ async function loadLeads() {
       <td>${l.brand} ${l.model} · ${l.year} · ${l.km.toLocaleString('en-IN')} km</td>
       <td>₹ ${l.valuation.toLocaleString('en-IN')}</td>
       <td>${l.loanEligibility ? `₹ ${l.loanEligibility.eligibleAmount.toLocaleString('en-IN')} @ ${l.loanEligibility.interestRate}%` : '—'}</td>
-      <td><span class="badge-pill badge-${l.status}">${l.status}</span></td>
+      <td style="white-space:nowrap;">
+        <input type="number" class="elig-income" placeholder="Income ₹" style="width:90px;" value="${l.loanEligibility?.monthlyIncome || ''}">
+        <button class="btn-sm btn-save" data-action="run-eligibility">Run</button>
+      </td>
       <td>
         <select class="lead-status">
           <option value="new" ${l.status==='new'?'selected':''}>New</option>
@@ -147,7 +154,109 @@ async function loadLeads() {
       loadLeads();
     });
   });
+
+  tbody.querySelectorAll('button[data-action="run-eligibility"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      const income = +row.querySelector('.elig-income').value;
+      if (!income) { alert('Enter a monthly income first.'); return; }
+      await api(`/leads/${row.dataset.id}/eligibility`, { method: 'PUT', body: JSON.stringify({ monthlyIncome: income }) });
+      loadLeads();
+    });
+  });
 }
+
+// --- Test Drives ---
+async function loadTestDrives() {
+  const rows = await api('/test-drives').catch(() => []);
+  const tbody = document.getElementById('testDrivesTableBody');
+  tbody.innerHTML = rows.map((r) => `
+    <tr data-id="${r._id}">
+      <td>${r.name}</td>
+      <td>${r.phone}</td>
+      <td>${r.carName}</td>
+      <td>${new Date(r.createdAt).toLocaleString('en-IN')}</td>
+      <td>
+        <select class="td-status">
+          <option value="new" ${r.status==='new'?'selected':''}>New</option>
+          <option value="scheduled" ${r.status==='scheduled'?'selected':''}>Scheduled</option>
+          <option value="completed" ${r.status==='completed'?'selected':''}>Completed</option>
+          <option value="cancelled" ${r.status==='cancelled'?'selected':''}>Cancelled</option>
+        </select>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--slate-light);">No test drive requests yet.</td></tr>';
+
+  tbody.querySelectorAll('.td-status').forEach((sel) => {
+    sel.addEventListener('change', async (e) => {
+      const row = e.target.closest('tr');
+      await api(`/test-drives/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
+    });
+  });
+}
+
+// --- Pricing ---
+let pricingRows = [];
+async function loadPricing() {
+  pricingRows = await api('/valuation/catalog/prices').catch(() => []);
+  const q = document.getElementById('pricingSearch')?.value.trim().toLowerCase() || '';
+  renderPricing(q ? pricingRows.filter((r) => `${r.brand} ${r.model}`.toLowerCase().includes(q)) : pricingRows);
+}
+
+function renderPricing(rows) {
+  const tbody = document.getElementById('pricingTableBody');
+  tbody.innerHTML = rows.map((r) => `
+    <tr data-brand="${r.brand}" data-model="${r.model}">
+      <td>${r.brand}</td>
+      <td>${r.model}</td>
+      <td>₹ ${r.defaultPrice.toLocaleString('en-IN')}</td>
+      <td><input type="number" class="price-input" value="${r.currentPrice}" style="width:120px;"></td>
+      <td style="white-space:nowrap;">
+        <button class="btn-sm btn-save" data-action="save-price">Save</button>
+        ${r.overridden ? '<button class="btn-sm btn-del" data-action="reset-price">Reset</button>' : ''}
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--slate-light);">No models found.</td></tr>';
+
+  tbody.querySelectorAll('button[data-action="save-price"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      const basePrice = +row.querySelector('.price-input').value;
+      await api('/valuation/catalog/prices', { method: 'PUT', body: JSON.stringify({ brand: row.dataset.brand, model: row.dataset.model, basePrice }) });
+      loadPricing();
+    });
+  });
+  tbody.querySelectorAll('button[data-action="reset-price"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      await api('/valuation/catalog/prices', { method: 'DELETE', body: JSON.stringify({ brand: row.dataset.brand, model: row.dataset.model }) });
+      loadPricing();
+    });
+  });
+}
+
+document.getElementById('pricingSearch')?.addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  renderPricing(pricingRows.filter((r) => `${r.brand} ${r.model}`.toLowerCase().includes(q)));
+});
+
+// --- Account ---
+document.getElementById('changePwBtn')?.addEventListener('click', async () => {
+  const currentPassword = document.getElementById('curPassword').value;
+  const newPassword = document.getElementById('newPassword').value;
+  const msg = document.getElementById('pwMsg');
+  msg.textContent = '';
+  try {
+    await api('/auth/change-password', { method: 'PUT', body: JSON.stringify({ currentPassword, newPassword }) });
+    msg.style.color = 'var(--emerald)';
+    msg.textContent = 'Password updated.';
+    document.getElementById('curPassword').value = '';
+    document.getElementById('newPassword').value = '';
+  } catch (err) {
+    msg.style.color = '#e14343';
+    msg.textContent = err.message;
+  }
+});
 
 loadCars();
 loadLeads();

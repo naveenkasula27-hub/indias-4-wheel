@@ -43,10 +43,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     <div class="spec-item"><span>${k}</span><strong>${v}</strong></div>
   `).join('');
 
-  // EMI calculator (20% down, 60 months, ~10.5% flat approximation already baked into car.emi)
+  // EMI calculator — down payment %, interest rate, and tenure are all adjustable
   document.getElementById('emiPrice').textContent = formatPrice(car.price);
-  document.getElementById('emiDown').textContent = formatPrice(Math.round(car.price * 0.2));
-  document.getElementById('emiMonthly').textContent = `₹${car.emi.toLocaleString('en-IN')}`;
+  const downSlider = document.getElementById('emiDownSlider');
+  const rateSlider = document.getElementById('emiRateSlider');
+  const tenureSlider = document.getElementById('emiTenureSlider');
+
+  function computeEmi(principal, annualRatePct, tenureMonths) {
+    const r = annualRatePct / 12 / 100;
+    if (r === 0) return Math.round(principal / tenureMonths);
+    const factor = Math.pow(1 + r, tenureMonths);
+    return Math.round((principal * r * factor) / (factor - 1));
+  }
+
+  function updateEmi() {
+    const downPct = +downSlider.value;
+    const rate = +rateSlider.value;
+    const tenure = +tenureSlider.value;
+    const downAmount = Math.round(car.price * (downPct / 100));
+    const loanAmount = car.price - downAmount;
+    const emi = computeEmi(loanAmount, rate, tenure);
+
+    document.getElementById('emiDownLabel').textContent = `${downPct}% · ${formatPrice(downAmount)}`;
+    document.getElementById('emiRateLabel').textContent = `${rate}%`;
+    document.getElementById('emiTenureLabel').textContent = `${tenure} months`;
+    document.getElementById('emiMonthly').textContent = `₹${emi.toLocaleString('en-IN')}`;
+  }
+  [downSlider, rateSlider, tenureSlider].forEach(el => el?.addEventListener('input', updateEmi));
+  updateEmi();
 
   // Similar cars: same body type, excluding current
   const similar = CARS.filter(c => c.bodyType === car.bodyType && c.id !== car.id).slice(0, 6);
@@ -68,6 +92,83 @@ document.addEventListener('DOMContentLoaded', async () => {
       </div>
     </a>
   `).join('');
+
+  // --- Get Loan Offer: prefill the standalone loan page with this car's price ---
+  const loanLink = document.getElementById('getLoanOfferLink');
+  if (loanLink) loanLink.href = `loan.html?price=${car.price}`;
+
+  // --- Save car (requires customer login) ---
+  const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
+  const customerToken = localStorage.getItem('i4w_customer_token');
+  const saveBtn = document.getElementById('saveCarBtn');
+  let saved = false;
+
+  async function refreshSavedState() {
+    if (!customerToken || !apiBase) return;
+    try {
+      const res = await fetch(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${customerToken}` } });
+      if (!res.ok) return;
+      const data = await res.json();
+      saved = data.savedCars.some((c) => c._id === car.id);
+      saveBtn.textContent = saved ? '♥ Saved' : '♡ Save';
+      saveBtn.classList.toggle('active', saved);
+    } catch { /* ignore */ }
+  }
+  refreshSavedState();
+
+  saveBtn?.addEventListener('click', async () => {
+    if (!customerToken) {
+      window.location.href = 'account.html';
+      return;
+    }
+    const method = saved ? 'DELETE' : 'POST';
+    await fetch(`${apiBase}/customer/saved-cars/${car.id}`, { method, headers: { Authorization: `Bearer ${customerToken}` } });
+    saved = !saved;
+    saveBtn.textContent = saved ? '♥ Saved' : '♡ Save';
+    saveBtn.classList.toggle('active', saved);
+  });
+
+  // --- Share car ---
+  document.getElementById('shareCarBtn')?.addEventListener('click', async () => {
+    const shareData = { title: car.name, text: `Check out this ${car.name} on India's 4 Wheel — ${formatPrice(car.price)}`, url: window.location.href };
+    if (navigator.share) {
+      try { await navigator.share(shareData); } catch { /* user cancelled */ }
+    } else {
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(`${shareData.text}\n${shareData.url}`)}`;
+      window.open(waUrl, '_blank');
+    }
+  });
+
+  // --- Book Test Drive modal ---
+  const tdModal = document.getElementById('testDriveModal');
+  document.getElementById('bookTestDriveBtn')?.addEventListener('click', () => {
+    document.getElementById('tdCarName').textContent = car.name;
+    document.getElementById('tdMsg').textContent = '';
+    tdModal.style.display = 'flex';
+  });
+  document.getElementById('closeTdModal')?.addEventListener('click', () => { tdModal.style.display = 'none'; });
+  tdModal?.addEventListener('click', (e) => { if (e.target === tdModal) tdModal.style.display = 'none'; });
+
+  document.getElementById('tdSubmitBtn')?.addEventListener('click', async () => {
+    const name = document.getElementById('tdName').value.trim();
+    const phone = document.getElementById('tdPhone').value.trim();
+    const msg = document.getElementById('tdMsg');
+    if (!name || !/^\d{10}$/.test(phone)) {
+      msg.style.color = '#e14343';
+      msg.textContent = 'Enter your name and a valid 10-digit mobile number.';
+      return;
+    }
+    try {
+      if (!apiBase) throw new Error('offline');
+      await fetch(`${apiBase}/test-drives`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, carId: car.id, carName: car.name }),
+      });
+    } catch { /* request still confirmed to the user even if the backend is unreachable */ }
+    msg.style.color = 'var(--emerald)';
+    msg.textContent = `Thanks ${name}! We'll call you shortly to schedule your test drive.`;
+    setTimeout(() => { tdModal.style.display = 'none'; }, 1800);
+  });
 
   /* ---------- Mobile nav toggle ---------- */
   const navToggle = document.getElementById('navToggle');

@@ -93,6 +93,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ---------- Homepage EMI calculator (interactive) ---------- */
+  const hPrice = document.getElementById('homeEmiPriceSlider');
+  const hDown = document.getElementById('homeEmiDownSlider');
+  const hRate = document.getElementById('homeEmiRateSlider');
+  const hTenure = document.getElementById('homeEmiTenureSlider');
+  function computeEmi(principal, annualRatePct, tenureMonths) {
+    const r = annualRatePct / 12 / 100;
+    if (r === 0) return Math.round(principal / tenureMonths);
+    const factor = Math.pow(1 + r, tenureMonths);
+    return Math.round((principal * r * factor) / (factor - 1));
+  }
+  function updateHomeEmi() {
+    if (!hPrice) return;
+    const price = +hPrice.value;
+    const downPct = +hDown.value;
+    const rate = +hRate.value;
+    const tenure = +hTenure.value;
+    const downAmount = Math.round(price * (downPct / 100));
+    const emi = computeEmi(price - downAmount, rate, tenure);
+    document.getElementById('homeEmiPriceLabel').textContent = formatPrice(price);
+    document.getElementById('homeEmiDownLabel').textContent = `${downPct}% · ${formatPrice(downAmount)}`;
+    document.getElementById('homeEmiRateLabel').textContent = `${rate}%`;
+    document.getElementById('homeEmiTenureLabel').textContent = `${tenure} months`;
+    document.getElementById('homeEmiMonthly').textContent = `₹${emi.toLocaleString('en-IN')}`;
+  }
+  [hPrice, hDown, hRate, hTenure].forEach(el => el?.addEventListener('input', updateHomeEmi));
+  updateHomeEmi();
+
   /* ---------- Generic horizontal-scroll arrow buttons ---------- */
   document.querySelectorAll('.car-arrow').forEach(btn => {
     btn.addEventListener('click', () => {

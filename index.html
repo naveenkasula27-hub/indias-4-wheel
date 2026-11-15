@@ -44,8 +44,10 @@
     </nav>
 
     <div class="header-actions">
-      <button class="btn btn-ghost" id="cityBtn">📍 Hyderabad</button>
-      <button class="btn btn-outline">Login</button>
+      <select class="btn btn-ghost city-select" id="cityBtn">
+        <option>Hyderabad</option><option>Delhi NCR</option><option>Mumbai</option><option>Bengaluru</option><option>Chennai</option><option>Pune</option><option>Kolkata</option>
+      </select>
+      <a id="headerLoginLink" class="btn btn-outline" href="account.html">Login</a>
       <a class="btn btn-primary" href="sell.html">Sell Your Car</a>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
     </div>
@@ -255,15 +257,28 @@
           <li>✔ Car insurance with zero-depreciation add-on</li>
           <li>✔ Challan check &amp; FASTag recharge, all in one app</li>
         </ul>
-        <button class="btn btn-outline">Check Loan Eligibility</button>
+        <a href="loan.html" class="btn btn-outline">Check Loan Eligibility</a>
       </div>
       <div class="fin-visual fade-up delay-2">
         <div class="emi-card">
           <p class="sell-card-label">EMI Calculator</p>
-          <div class="emi-row"><span>Car Price</span><strong>₹ 8,50,000</strong></div>
-          <div class="emi-row"><span>Down Payment</span><strong>₹ 1,50,000</strong></div>
-          <div class="emi-row"><span>Tenure</span><strong>60 months</strong></div>
-          <div class="emi-total">Monthly EMI <strong>₹ 14,980</strong></div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Car Price</span><strong id="homeEmiPriceLabel">₹ 8,50,000</strong></div>
+            <input type="range" id="homeEmiPriceSlider" min="200000" max="4000000" value="850000" step="50000">
+          </div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Down Payment</span><strong id="homeEmiDownLabel">20% · ₹ 1,70,000</strong></div>
+            <input type="range" id="homeEmiDownSlider" min="0" max="80" value="20" step="5">
+          </div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Interest Rate</span><strong id="homeEmiRateLabel">9.5%</strong></div>
+            <input type="range" id="homeEmiRateSlider" min="7" max="16" value="9.5" step="0.5">
+          </div>
+          <div class="emi-slider-row">
+            <div class="emi-slider-label"><span>Tenure</span><strong id="homeEmiTenureLabel">60 months</strong></div>
+            <input type="range" id="homeEmiTenureSlider" min="12" max="84" value="60" step="12">
+          </div>
+          <div class="emi-total">Monthly EMI <strong id="homeEmiMonthly">—</strong></div>
         </div>
       </div>
     </div>
@@ -370,6 +385,7 @@
 </footer>
 
 <script src="admin/config.js"></script>
+<script src="js/account-session.js"></script>
 <script src="js/cars-data.js"></script>
 <script src="js/script.js"></script>
 </body>

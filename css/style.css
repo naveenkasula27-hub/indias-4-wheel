@@ -66,6 +66,7 @@ img{max-width:100%;display:block;}
 .btn-outline{background:transparent;color:var(--navy);border:1.5px solid var(--navy);}
 .btn-outline:hover{background:var(--navy);color:#fff;}
 .btn-ghost{background:var(--bg-alt);color:var(--navy);}
+select.city-select{border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;appearance:none;-webkit-appearance:none;padding-right:26px;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%230B2A5B'/></svg>");background-repeat:no-repeat;background-position:right 10px center;}
 .btn-lg{padding:15px 30px;font-size:15px;}
 
 /* ---------- Header ---------- */
@@ -255,6 +256,10 @@ img{max-width:100%;display:block;}
 .emi-row strong{color:var(--navy);}
 .emi-total{display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-weight:600;color:var(--slate);font-size:14.5px;}
 .emi-total strong{font-family:var(--ff-display);font-size:24px;color:var(--orange);}
+.emi-slider-row{padding:10px 0;border-bottom:1px solid var(--line);}
+.emi-slider-label{display:flex;justify-content:space-between;font-size:13.5px;color:var(--slate);margin-bottom:6px;}
+.emi-slider-label strong{color:var(--navy);}
+.emi-slider-row input[type="range"]{width:100%;accent-color:var(--orange);}
 
 /* ---------- Testimonials ---------- */
 .testi-wrap{position:relative;display:flex;align-items:center;gap:14px;}

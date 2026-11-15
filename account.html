@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account — India's 4 Wheel</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/inventory.css">
+<link rel="stylesheet" href="css/sell-flow.css">
+<link rel="stylesheet" href="css/account.css">
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40">
+          <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+          <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+          <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+        </svg>
+      </span>
+      <span class="brand-text">India's<strong>4Wheel</strong></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="inventory.html">Buy Car</a>
+      <a href="sell.html">Sell Car</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="loan.html">Financing</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section" style="padding-top:48px;">
+    <div class="container" style="max-width:720px;">
+
+      <!-- LOGGED OUT: login / signup -->
+      <div id="authView">
+        <div class="account-tabs">
+          <button class="account-tab active" data-form="login">Log In</button>
+          <button class="account-tab" data-form="signup">Sign Up</button>
+        </div>
+
+        <form id="loginFormC" class="sell-form-card account-form active">
+          <h3>Welcome back</h3>
+          <div class="field"><label>Email</label><input type="email" id="loginEmail" required></div>
+          <div class="field"><label>Password</label><input type="password" id="loginPassword" required></div>
+          <p class="login-error" id="loginErrorC" style="display:none;color:#e14343;font-size:13px;"></p>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Log In</button>
+        </form>
+
+        <form id="signupFormC" class="sell-form-card account-form">
+          <h3>Create your account</h3>
+          <div class="field"><label>Full Name</label><input type="text" id="suName" required></div>
+          <div class="field"><label>Email</label><input type="email" id="suEmail" required></div>
+          <div class="field"><label>Phone</label><input type="tel" id="suPhone" pattern="[0-9]{10}" placeholder="10-digit mobile number"></div>
+          <div class="field"><label>Password</label><input type="password" id="suPassword" required minlength="6"></div>
+          <p class="login-error" id="signupErrorC" style="display:none;color:#e14343;font-size:13px;"></p>
+          <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Create Account</button>
+        </form>
+      </div>
+
+      <!-- LOGGED IN: profile, saved cars, submissions -->
+      <div id="profileView" style="display:none;">
+        <div class="admin-topbar-row">
+          <h1 id="profileGreeting">Hi!</h1>
+          <button class="btn btn-outline" id="logoutBtnC">Log Out</button>
+        </div>
+
+        <h3 style="margin-top:28px;">My Saved Cars</h3>
+        <div class="inv-grid" id="savedCarsGrid" style="margin-top:14px;"></div>
+        <p id="noSavedCars" style="color:var(--slate-light);display:none;">You haven't saved any cars yet. Browse the <a href="inventory.html">inventory</a> and tap "Save" on a car you like.</p>
+
+        <h3 style="margin-top:40px;">My Sell-Car Submissions</h3>
+        <table class="admin-table" id="mySubmissionsTable" style="margin-top:14px;">
+          <thead><tr><th>Car</th><th>Valuation</th><th>Status</th></tr></thead>
+          <tbody id="mySubmissionsBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <circle cx="24" cy="24" r="22" fill="url(#g2)"/>
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+            <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+            <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+          </svg>
+        </span>
+        <span class="brand-text light">India's<strong>4Wheel</strong></span>
+      </a>
+      <p>India's trusted platform to buy and sell certified used cars — inspected, warrantied, delivered to your door.</p>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a></div>
+    <div class="footer-col"><h5>Discover</h5><a href="inventory.html">Buy a used car</a><a href="sell.html">Sell a used car</a><a href="loan.html">Get a car loan</a></div>
+    <div class="footer-col"><h5>Help</h5><a href="index.html#faq">FAQs</a><a href="#">Contact Us</a></div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 India's 4 Wheel. All rights reserved.</p>
+    <p>Build · Grow · Drive — crafted with pride for every Indian road.</p>
+  </div>
+</footer>
+
+<script src="admin/config.js"></script>
+<script src="js/cars-data.js"></script>
+<script src="js/account.js"></script>
+</body>
+</html>

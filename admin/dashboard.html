@@ -16,6 +16,9 @@
       <nav>
         <a href="#inventory" class="nav-link active" data-tab="inventory">Manage Inventory</a>
         <a href="#leads" class="nav-link" data-tab="leads">Sell-Car Leads</a>
+        <a href="#testdrives" class="nav-link" data-tab="testdrives">Test Drives</a>
+        <a href="#pricing" class="nav-link" data-tab="pricing">Valuation Pricing</a>
+        <a href="#account" class="nav-link" data-tab="account">Account</a>
       </nav>
       <button class="logout-btn" id="logoutBtn">Log Out</button>
     </aside>
@@ -70,9 +73,48 @@
         <div class="admin-card">
           <div class="admin-card-head"><h3>Sell-Car Submissions</h3></div>
           <table class="admin-table">
-            <thead><tr><th>Name</th><th>Car</th><th>Valuation</th><th>Loan Eligible</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Name</th><th>Car</th><th>Valuation</th><th>Loan Eligible</th><th>Check Eligibility</th><th>Status</th></tr></thead>
             <tbody id="leadsTableBody"></tbody>
           </table>
+        </div>
+      </section>
+
+      <!-- TEST DRIVES TAB -->
+      <section id="tab-testdrives" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Test Drive Requests</h3></div>
+          <table class="admin-table">
+            <thead><tr><th>Name</th><th>Phone</th><th>Car</th><th>Requested</th><th>Status</th></tr></thead>
+            <tbody id="testDrivesTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PRICING TAB -->
+      <section id="tab-pricing" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>Valuation Starting Prices</h3>
+            <input id="pricingSearch" placeholder="Search brand or model..." style="padding:8px 12px;border:1px solid var(--line);border-radius:7px;font-size:13px;width:240px;">
+          </div>
+          <p style="color:var(--slate-light);font-size:13px;margin:0 0 14px;">This is the starting price the valuation engine uses for each model before depreciation. Changing it changes every future "Sell My Car" quote and loan calculation for that model.</p>
+          <table class="admin-table">
+            <thead><tr><th>Brand</th><th>Model</th><th>Default Price</th><th>Current Price</th><th></th></tr></thead>
+            <tbody id="pricingTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ACCOUNT TAB -->
+      <section id="tab-account" style="display:none;">
+        <div class="admin-card" style="max-width:420px;">
+          <div class="admin-card-head"><h3>Change Admin Password</h3></div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <input id="curPassword" type="password" placeholder="Current password" style="padding:10px 12px;border:1px solid var(--line);border-radius:7px;">
+            <input id="newPassword" type="password" placeholder="New password" style="padding:10px 12px;border:1px solid var(--line);border-radius:7px;">
+            <p id="pwMsg" style="font-size:13px;margin:0;"></p>
+            <button class="btn-admin-primary" id="changePwBtn" style="width:auto;padding:10px 22px;">Update Password</button>
+          </div>
         </div>
       </section>
     </main>

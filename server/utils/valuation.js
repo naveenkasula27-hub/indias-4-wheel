@@ -12,8 +12,8 @@ const CITY_TIER = {
  * -> ownership penalty -> fuel-type adjustment -> city demand adjustment.
  * This is an independent formula, not sourced from any competitor's data.
  */
-function estimateValuation({ brand, model, year, km, fuel, owners = 1, city }) {
-  const base = getBasePrice(brand);
+function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, basePriceOverride }) {
+  const base = basePriceOverride != null ? basePriceOverride : getBasePrice(brand, model);
   const currentYear = new Date().getFullYear();
   const age = Math.max(0, currentYear - Number(year));
 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Check Loan Eligibility — India's 4 Wheel</title>
+<meta name="description" content="Check your car loan eligibility instantly — interest rate, eligible amount, and EMI based on your income.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/inventory.css">
+<link rel="stylesheet" href="css/sell-flow.css">
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" width="40" height="40">
+          <circle cx="24" cy="24" r="22" fill="url(#g1)"/>
+          <defs><linearGradient id="g1" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+          <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+          <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+        </svg>
+      </span>
+      <span class="brand-text">India's<strong>4Wheel</strong></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <a href="inventory.html">Buy Car</a>
+      <a href="sell.html">Sell Car</a>
+      <a href="index.html#how">How It Works</a>
+      <a href="loan.html" class="active-link">Financing</a>
+      <a href="index.html#faq">FAQ</a>
+    </nav>
+    <div class="header-actions">
+      <a href="account.html" class="btn btn-outline" id="headerLoginLink">Login</a>
+      <a href="sell.html" class="btn btn-primary">Sell Your Car</a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="sell-hero">
+    <div class="container">
+      <p class="tag light">Finance Your Next Car</p>
+      <h1>Check your loan eligibility instantly</h1>
+      <p class="hero-sub light" style="margin:0;">No paperwork, no credit pull — just your income and a few details.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container" style="max-width:640px;">
+      <form id="loanForm" class="sell-form-card">
+        <h3>Your Details</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label>Car Price (₹)</label>
+            <input type="number" id="qCarPrice" placeholder="e.g. 850000" required min="0">
+          </div>
+          <div class="field">
+            <label>Down Payment (₹, optional)</label>
+            <input type="number" id="qDownPayment" placeholder="e.g. 150000" min="0" value="0">
+          </div>
+          <div class="field">
+            <label>Monthly Income (₹)</label>
+            <input type="number" id="qIncome" placeholder="e.g. 60000" required min="0">
+          </div>
+          <div class="field">
+            <label>Existing Monthly EMIs (₹)</label>
+            <input type="number" id="qExistingEmi" placeholder="e.g. 0" min="0" value="0">
+          </div>
+          <div class="field">
+            <label>Employment Type</label>
+            <select id="qEmployment">
+              <option value="salaried">Salaried</option>
+              <option value="self-employed">Self-Employed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Credit Score Band</label>
+            <select id="qCreditBand">
+              <option value="750+">750+</option>
+              <option value="700-749">700 – 749</option>
+              <option value="650-699">650 – 699</option>
+              <option value="below-650">Below 650</option>
+              <option value="no-history">No Credit History</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Tenure (months)</label>
+            <select id="qTenure">
+              <option value="36">36</option>
+              <option value="48">48</option>
+              <option value="60" selected>60</option>
+              <option value="72">72</option>
+              <option value="84">84</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:8px;">Check Eligibility</button>
+
+        <div id="loanResultBox" style="display:none;margin-top:24px;" class="quote-result">
+          <p class="sell-card-label" style="color:var(--slate-light);">You're Eligible For</p>
+          <h2 class="quote-amount" id="loanEligibleAmount">₹ 0</h2>
+          <p class="quote-car-name" id="loanDetails"></p>
+          <p class="quote-note" id="loanShortfallNote"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="34" height="34">
+            <circle cx="24" cy="24" r="22" fill="url(#g2)"/>
+            <defs><linearGradient id="g2" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#FF6A2B"/><stop offset="1" stop-color="#0B2A5B"/></linearGradient></defs>
+            <path d="M12 29l2.3-7.2a3 3 0 0 1 2.86-2.1h13.68a3 3 0 0 1 2.86 2.1L36 29" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <rect x="10.5" y="27.5" width="27" height="6.5" rx="3.2" fill="#fff"/>
+            <circle cx="17" cy="35" r="3.2" fill="#0B2A5B"/><circle cx="31" cy="35" r="3.2" fill="#0B2A5B"/>
+          </svg>
+        </span>
+        <span class="brand-text light">India's<strong>4Wheel</strong></span>
+      </a>
+      <p>India's trusted platform to buy and sell certified used cars — inspected, warrantied, delivered to your door.</p>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="#">About Us</a><a href="#">Careers</a><a href="#">Blog</a></div>
+    <div class="footer-col"><h5>Discover</h5><a href="inventory.html">Buy a used car</a><a href="sell.html">Sell a used car</a><a href="loan.html">Get a car loan</a></div>
+    <div class="footer-col"><h5>Help</h5><a href="index.html#faq">FAQs</a><a href="#">Contact Us</a></div>
+  </div>
+  <div class="container footer-bottom">
+    <p>© 2026 India's 4 Wheel. All rights reserved.</p>
+    <p>Build · Grow · Drive — crafted with pride for every Indian road.</p>
+  </div>
+</footer>
+
+<script src="admin/config.js"></script>
+<script src="js/account-session.js"></script>
+<script src="js/loan.js"></script>
+</body>
+</html>
