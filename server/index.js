@@ -14,6 +14,18 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
+
+// On a serverless platform (Vercel) a fresh invocation needs the DB connected
+// before any route runs; mongoose caches the connection across warm invocations.
+let dbReady = null;
+app.use((req, res, next) => {
+  if (!dbReady) dbReady = connectDB();
+  dbReady.then(() => next()).catch((err) => {
+    console.error('DB connection failed:', err.message);
+    res.status(503).json({ error: 'Database unavailable' });
+  });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/valuation', valuationRoutes);
@@ -25,11 +37,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Server error' });
 });
 
-const PORT = process.env.PORT || 4000;
+// Only start a persistent listener when run directly (local dev / Render-style
+// hosts). On Vercel, the module is imported and invoked per-request instead.
+if (require.main === module) {
+  const PORT = process.env.PORT || 4000;
+  app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+}
 
-connectDB()
-  .then(() => app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`)))
-  .catch((err) => {
-    console.error('Failed to connect to MongoDB:', err.message);
-    process.exit(1);
-  });
+module.exports = app;
