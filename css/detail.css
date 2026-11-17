@@ -7,7 +7,7 @@
 .gallery-main{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--bg-alt);height:380px;}
 .gallery-main img{width:100%;height:100%;object-fit:cover;}
 .gallery-main .car-badge{top:14px;left:14px;font-size:12px;padding:6px 14px;}
-.gallery-thumbs{display:flex;gap:10px;margin-top:10px;}
+.gallery-thumbs{display:flex;gap:10px;margin-top:10px;overflow-x:auto;scrollbar-width:none;}
 .thumb{width:84px;height:62px;border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;flex-shrink:0;}
 .thumb.active{border-color:var(--orange);}
 .thumb img{width:100%;height:100%;object-fit:cover;}
@@ -39,13 +39,18 @@
 .seller-sub{font-size:13px;margin:0;}
 
 @media (max-width:960px){
-  .detail-grid,.detail-lower-grid{grid-template-columns:1fr;}
+  .detail-grid,.detail-lower-grid{grid-template-columns:minmax(0,1fr);}
   .buy-box{position:static;}
   .specs-grid{grid-template-columns:repeat(2,1fr);}
 }
 @media (max-width:600px){
   .specs-grid,.inspection-grid{grid-template-columns:1fr;}
   .gallery-main{height:260px;}
+  .buy-box{padding:18px;}
+  .detail-cta-row{flex-wrap:wrap;}
+  .detail-cta-row .btn{white-space:normal;font-size:13px;padding:12px 8px;}
+  .detail-price-row{flex-wrap:wrap;gap:14px;}
+  .detail-emi{text-align:left;}
 }
 
 .td-modal-overlay{position:fixed;inset:0;background:rgba(11,42,91,0.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}

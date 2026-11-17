@@ -54,4 +54,6 @@
   .form-grid{grid-template-columns:1fr;}
   .progress-step{width:auto;font-size:11px;}
   .progress-line{margin-top:-20px;max-width:40px;}
+  .form-btn-row{flex-wrap:wrap;}
+  .form-btn-row .btn{white-space:normal;font-size:13px;padding:12px 10px;flex-basis:100%;}
 }
