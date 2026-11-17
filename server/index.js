@@ -10,6 +10,7 @@ const loanRoutes = require('./routes/loan');
 const leadRoutes = require('./routes/leads');
 const customerRoutes = require('./routes/customer');
 const testDriveRoutes = require('./routes/testdrive');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
@@ -35,6 +36,7 @@ app.use('/api/loan', loanRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/customer', customerRoutes);
 app.use('/api/test-drives', testDriveRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

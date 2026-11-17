@@ -19,15 +19,17 @@ function checkEligibility({ carPrice, downPayment = 0, monthlyIncome, existingEm
   const maxMonthlyObligation = monthlyIncome * foirCap;
   const affordableEmi = Math.max(0, maxMonthlyObligation - existingEmis);
 
-  // Interest rate tier by credit score band.
+  // Interest rate tier by credit score band — calibrated to actual Indian
+  // used-car loan rates (roughly 10-16%, running 2-4% above new-car rates
+  // due to lower resale value/higher default risk), not new-car rates.
   const rateTable = {
-    '750+': 9.5,
-    '700-749': 10.5,
-    '650-699': 12.0,
-    'below-650': 14.5,
-    'no-history': 13.0,
+    '750+': 11.0,
+    '700-749': 12.5,
+    '650-699': 14.0,
+    'below-650': 16.5,
+    'no-history': 15.0,
   };
-  const interestRate = rateTable[creditScoreBand] ?? 11.5;
+  const interestRate = rateTable[creditScoreBand] ?? 13.5;
 
   // Back-solve max loan amount the affordable EMI can support at this rate/tenure.
   const r = interestRate / 12 / 100;

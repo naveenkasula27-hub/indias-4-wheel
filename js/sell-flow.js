@@ -42,8 +42,8 @@ function fallbackLoanEligibility({ carPrice, monthlyIncome, existingEmis = 0, em
   const loanRequired = carPrice;
   const foirCap = employmentType === 'salaried' ? 0.55 : 0.45;
   const affordableEmi = Math.max(0, monthlyIncome * foirCap - existingEmis);
-  const rateTable = { '750+': 9.5, '700-749': 10.5, '650-699': 12.0, 'below-650': 14.5, 'no-history': 13.0 };
-  const interestRate = rateTable[creditScoreBand] ?? 11.5;
+  const rateTable = { '750+': 11.0, '700-749': 12.5, '650-699': 14.0, 'below-650': 16.5, 'no-history': 15.0 };
+  const interestRate = rateTable[creditScoreBand] ?? 13.5;
   const r = interestRate / 12 / 100;
   const factor = Math.pow(1 + r, tenureMonths);
   const maxLoanByEmi = affordableEmi > 0 ? Math.round((affordableEmi * (factor - 1)) / (r * factor)) : 0;

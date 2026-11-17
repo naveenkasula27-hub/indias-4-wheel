@@ -20,19 +20,20 @@ async function api(path, opts = {}) {
 }
 
 // --- Tabs ---
-const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', pricing: 'Valuation Pricing', account: 'Account' };
+const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', account: 'Account' };
 document.querySelectorAll('.nav-link').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
     link.classList.add('active');
     const tab = link.dataset.tab;
-    ['inventory', 'leads', 'testdrives', 'pricing', 'account'].forEach((t) => {
+    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'account'].forEach((t) => {
       document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     });
     document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
     if (tab === 'pricing') loadPricing();
     if (tab === 'testdrives') loadTestDrives();
+    if (tab === 'messages') loadMessages();
   });
 });
 
@@ -191,6 +192,34 @@ async function loadTestDrives() {
     sel.addEventListener('change', async (e) => {
       const row = e.target.closest('tr');
       await api(`/test-drives/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
+    });
+  });
+}
+
+// --- Contact Messages ---
+async function loadMessages() {
+  const rows = await api('/contact').catch(() => []);
+  const tbody = document.getElementById('messagesTableBody');
+  tbody.innerHTML = rows.map((m) => `
+    <tr data-id="${m._id}">
+      <td>${m.name}</td>
+      <td>${m.email}</td>
+      <td style="max-width:320px;">${m.message}</td>
+      <td>${new Date(m.createdAt).toLocaleString('en-IN')}</td>
+      <td>
+        <select class="msg-status">
+          <option value="new" ${m.status==='new'?'selected':''}>New</option>
+          <option value="read" ${m.status==='read'?'selected':''}>Read</option>
+          <option value="replied" ${m.status==='replied'?'selected':''}>Replied</option>
+        </select>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="color:var(--slate-light);">No messages yet.</td></tr>';
+
+  tbody.querySelectorAll('.msg-status').forEach((sel) => {
+    sel.addEventListener('change', async (e) => {
+      const row = e.target.closest('tr');
+      await api(`/contact/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
     });
   });
 }

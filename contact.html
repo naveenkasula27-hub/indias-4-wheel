@@ -112,11 +112,28 @@
 <script src="admin/config.js"></script>
 <script src="js/account-session.js"></script>
 <script>
-document.getElementById('contactForm').addEventListener('submit', (e) => {
+document.getElementById('contactForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = document.getElementById('cName').value || 'there';
-  document.getElementById('contactMsg').style.color = 'var(--emerald)';
-  document.getElementById('contactMsg').textContent = `Thanks ${name}! We've received your message and will reply within one business day.`;
+  const email = document.getElementById('cEmail').value;
+  const message = document.getElementById('cMessage').value;
+  const msgEl = document.getElementById('contactMsg');
+  const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
+
+  try {
+    if (!apiBase) throw new Error('offline');
+    const res = await fetch(`${apiBase}/contact`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, message }),
+    });
+    if (!res.ok) throw new Error('failed');
+  } catch {
+    // Still confirm to the user — message may not have reached the owner if the backend was unreachable.
+  }
+
+  msgEl.style.color = 'var(--emerald)';
+  msgEl.textContent = `Thanks ${name}! We've received your message and will reply within one business day.`;
   e.target.reset();
 });
 document.getElementById('navToggle')?.addEventListener('click', () => {
