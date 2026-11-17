@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const brands = [...new Set(CARS.map(c => c.brand))].sort();
   filterBrand.innerHTML += brands.map(b => `<option value="${b}">${b}</option>`).join('');
 
+  // Apply filters coming in from a link (homepage budget tiles, model cards,
+  // body-type chips) — these set query params that were previously ignored.
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('body')) filterBody.value = params.get('body');
+  if (params.get('price')) filterPrice.value = params.get('price');
+  if (params.get('brand')) filterBrand.value = params.get('brand');
+  if (params.get('model')) searchInput.value = params.get('model');
+
   const cardHtml = (c) => `
     <a class="car-card" href="car-detail.html?id=${c.id}">
       <div class="car-media">

@@ -38,13 +38,24 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
     }
   }
 
-  // Mileage: deduct for every 10,000 km above a 12,000 km/year baseline.
+  // Mileage: 12,000 km/year is the baseline. Driven less than that earns a
+  // premium (low-mileage cars are genuinely sought after), driven more
+  // costs a penalty — both capped so a single extreme value can't dominate.
   const expectedKm = age * 12000;
-  const excessKm = Math.max(0, Number(km) - expectedKm);
-  const kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
+  const kmRatio = expectedKm > 0 ? Number(km) / expectedKm : 1;
+  let kmPenalty;
+  if (kmRatio < 1) {
+    // Up to +15% for a car driven at 50% or less of the expected mileage.
+    const underrun = Math.min(1, 1 - kmRatio);
+    kmPenalty = 1 + underrun * 0.15;
+  } else {
+    const excessKm = Number(km) - expectedKm;
+    kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
+  }
 
-  // Ownership: each additional owner beyond the first knocks resale value.
-  const ownerPenalty = Math.max(0.85, 1 - (Math.max(1, owners) - 1) * 0.05);
+  // Ownership: each additional owner beyond the first knocks resale value;
+  // a confirmed single owner earns a small premium over the baseline.
+  const ownerPenalty = owners <= 1 ? 1.05 : Math.max(0.85, 1 - (owners - 1) * 0.05);
 
   // Fuel type: EVs and diesels currently hold value slightly differently.
   const fuelAdj = fuel === 'Electric' ? 1.05 : fuel === 'Diesel' ? 1.02 : fuel === 'CNG' ? 1.01 : 1;

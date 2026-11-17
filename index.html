@@ -20,6 +20,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.jpg">
 <link rel="preconnect" href="https://indias-4-wheel-fztk.vercel.app">
+<link rel="preconnect" href="https://images.pexels.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -52,8 +53,8 @@
     <nav class="main-nav" id="mainNav">
       <a href="inventory.html">Buy Car</a>
       <a href="sell.html">Sell Car</a>
-      <a href="#how">How It Works</a>
-      <a href="#financing">Financing</a>
+      <a href="sell.html#quote">Car Valuation</a>
+      <a href="loan.html">Financing</a>
       <a href="#faq">FAQ</a>
     </nav>
 
@@ -171,6 +172,36 @@
     </div>
   </section>
 
+  <!-- ============ BROWSE BY BUDGET ============ -->
+  <section class="section" style="padding-bottom:0;">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="tag">What's Your Budget?</p>
+          <h2>Browse certified cars by price</h2>
+        </div>
+      </div>
+      <div class="budget-grid" id="budgetGrid">
+        <a class="budget-card" href="inventory.html?price=0-500000">
+          <span class="budget-count" data-max="500000">— Cars</span>
+          <strong>Under ₹5 Lakh</strong>
+        </a>
+        <a class="budget-card" href="inventory.html?price=500000-1000000">
+          <span class="budget-count" data-min="500000" data-max="1000000">— Cars</span>
+          <strong>₹5L – ₹10 Lakh</strong>
+        </a>
+        <a class="budget-card" href="inventory.html?price=1000000-1500000">
+          <span class="budget-count" data-min="1000000" data-max="1500000">— Cars</span>
+          <strong>₹10L – ₹15 Lakh</strong>
+        </a>
+        <a class="budget-card" href="inventory.html?price=1500000-999999999">
+          <span class="budget-count" data-min="1500000">— Cars</span>
+          <strong>₹15 Lakh+</strong>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ BUY CARS CAROUSEL ============ -->
   <section class="section" id="buy">
     <div class="container">
@@ -187,15 +218,35 @@
       </div>
 
       <div class="car-filters">
-        <button class="chip active">All Cars</button>
-        <button class="chip">Hatchback</button>
-        <button class="chip">Sedan</button>
-        <button class="chip">SUV</button>
-        <button class="chip">Electric</button>
-        <button class="chip">Under ₹5L</button>
+        <a class="chip active" href="inventory.html">All Cars</a>
+        <a class="chip" href="inventory.html?body=Hatchback">Hatchback</a>
+        <a class="chip" href="inventory.html?body=Sedan">Sedan</a>
+        <a class="chip" href="inventory.html?body=SUV">SUV</a>
+        <a class="chip" href="inventory.html?body=Electric">Electric</a>
+        <a class="chip" href="inventory.html?price=0-500000">Under ₹5L</a>
       </div>
 
       <div class="car-track" id="carGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ EXPLORE BY MODEL ============ -->
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <p class="tag">Explore Models</p>
+          <h2>Pick a model, see where prices start</h2>
+        </div>
+      </div>
+      <div class="body-type-pills" id="modelBodyPills">
+        <button class="pill active" data-body="">All</button>
+        <button class="pill" data-body="Hatchback">Hatchback</button>
+        <button class="pill" data-body="Sedan">Sedan</button>
+        <button class="pill" data-body="SUV">SUV</button>
+        <button class="pill" data-body="Electric">Electric</button>
+      </div>
+      <div class="model-starts-grid" id="modelStartsGrid"></div>
     </div>
   </section>
 

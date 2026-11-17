@@ -34,9 +34,16 @@ function fallbackValuation({ brand, year, km, fuel, owners = 1, city }) {
       : (y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95);
   }
   const expectedKm = age * 12000;
-  const excessKm = Math.max(0, km - expectedKm);
-  const kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
-  const ownerPenalty = Math.max(0.85, 1 - (Math.max(1, owners) - 1) * 0.05);
+  const kmRatio = expectedKm > 0 ? km / expectedKm : 1;
+  let kmPenalty;
+  if (kmRatio < 1) {
+    const underrun = Math.min(1, 1 - kmRatio);
+    kmPenalty = 1 + underrun * 0.15;
+  } else {
+    const excessKm = km - expectedKm;
+    kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
+  }
+  const ownerPenalty = owners <= 1 ? 1.05 : Math.max(0.85, 1 - (owners - 1) * 0.05);
   const fuelAdj = fuel === 'Electric' ? 1.05 : fuel === 'Diesel' ? 1.02 : fuel === 'CNG' ? 1.01 : 1;
   const cityAdj = CITY_TIER[city] || 1.0;
   let estimate = base * depFactor * kmPenalty * ownerPenalty * fuelAdj * cityAdj;

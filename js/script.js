@@ -96,6 +96,52 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /* ---------- Budget tiles + "starts at" model cards ---------- */
+  if (typeof loadCars === 'function' && (document.getElementById('budgetGrid') || document.getElementById('modelStartsGrid'))) {
+    loadCars().then(cars => {
+      // Budget tile counts
+      document.querySelectorAll('.budget-count').forEach(el => {
+        const min = +el.dataset.min || 0;
+        const max = el.dataset.max ? +el.dataset.max : Infinity;
+        const count = cars.filter(c => c.price >= min && c.price < max).length;
+        el.textContent = `${count} ${count === 1 ? 'Car' : 'Cars'}`;
+      });
+
+      // "Starts at" model cards: group by model name, keep the cheapest of each
+      const modelsGrid = document.getElementById('modelStartsGrid');
+      if (!modelsGrid) return;
+
+      function renderModels(bodyFilter) {
+        const byModel = new Map();
+        cars.forEach(c => {
+          if (bodyFilter && c.bodyType !== bodyFilter) return;
+          const key = c.model || c.name;
+          const existing = byModel.get(key);
+          if (!existing || c.price < existing.price) byModel.set(key, c);
+        });
+        const list = [...byModel.values()].sort((a, b) => a.price - b.price).slice(0, 8);
+        modelsGrid.innerHTML = list.map(c => `
+          <a class="model-start-card" href="inventory.html?model=${encodeURIComponent(c.model || c.name)}">
+            <img src="${c.photo}" alt="${c.model || c.name}" loading="lazy">
+            <div class="msc-body">
+              <h4>${c.model || c.name}</h4>
+              <p class="msc-price">Starts at <strong>${formatPrice(c.price)}</strong></p>
+            </div>
+          </a>
+        `).join('') || '<p style="color:var(--slate-light);">No cars in this category yet.</p>';
+      }
+      renderModels('');
+
+      document.querySelectorAll('#modelBodyPills .pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('#modelBodyPills .pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          renderModels(pill.dataset.body);
+        });
+      });
+    });
+  }
+
   /* ---------- Homepage EMI calculator (interactive) ---------- */
   const hPrice = document.getElementById('homeEmiPriceSlider');
   const hDown = document.getElementById('homeEmiDownSlider');
