@@ -25,7 +25,7 @@ function fallbackValuation({ brand, year, km, fuel, owners = 1, city }) {
   const base = FALLBACK_CATALOG[brand]?.basePrice || 700000;
   const age = Math.max(0, new Date().getFullYear() - year);
   let depFactor = 1;
-  for (let y = 1; y <= age; y++) depFactor *= y <= 1 ? 0.82 : y <= 3 ? 0.85 : 0.9;
+  for (let y = 1; y <= age; y++) depFactor *= y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95;
   const expectedKm = age * 12000;
   const excessKm = Math.max(0, km - expectedKm);
   const kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
