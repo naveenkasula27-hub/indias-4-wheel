@@ -1,4 +1,4 @@
-const { getBasePrice } = require('./brandCatalog');
+const { getBasePrice, isLuxuryBrand } = require('./brandCatalog');
 
 // City tier multiplier — demand/resale strength differs by market tier.
 const CITY_TIER = {
@@ -19,13 +19,23 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
 
   // Depreciation curve, calibrated against real listed resale prices for
   // comparable cars (same model/age/km) on public marketplaces: ~10% yr1,
-  // ~8% yr2-3, ~5%/yr from yr4 onward (compounding). The previous curve
-  // (18%/15%/10%) undervalued cars by roughly 40-45% at 5-10 years old.
+  // ~8% yr2-3, ~5%/yr from yr4 onward (compounding) for mass-market cars.
+  // Premium/luxury brands (BMW, Mercedes, Audi, Volvo, Jeep, Land Rover,
+  // MINI) depreciate much faster — checked real BMW X1 resale listings
+  // against its new price and found ~15-16%/year, not ~7-8%/year — so they
+  // use a steeper curve: ~25% yr1, ~18% yr2-3, ~15%/yr from yr4 onward.
+  const luxury = isLuxuryBrand(brand);
   let depFactor = 1;
   for (let y = 1; y <= age; y++) {
-    if (y <= 1) depFactor *= 0.90;
-    else if (y <= 3) depFactor *= 0.92;
-    else depFactor *= 0.95;
+    if (luxury) {
+      if (y <= 1) depFactor *= 0.75;
+      else if (y <= 3) depFactor *= 0.82;
+      else depFactor *= 0.85;
+    } else {
+      if (y <= 1) depFactor *= 0.90;
+      else if (y <= 3) depFactor *= 0.92;
+      else depFactor *= 0.95;
+    }
   }
 
   // Mileage: deduct for every 10,000 km above a 12,000 km/year baseline.

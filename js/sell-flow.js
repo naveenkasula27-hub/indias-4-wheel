@@ -21,11 +21,18 @@ const FALLBACK_CATALOG = {
 
 const CITY_TIER = { Mumbai: 1.04, 'Delhi NCR': 1.03, Bengaluru: 1.03, Hyderabad: 1.0, Pune: 1.0, Chennai: 0.99, Kolkata: 0.97 };
 
+const LUXURY_BRANDS = ['Mercedes-Benz', 'BMW', 'Audi', 'Volvo', 'Jeep', 'Land Rover', 'MINI'];
+
 function fallbackValuation({ brand, year, km, fuel, owners = 1, city }) {
   const base = FALLBACK_CATALOG[brand]?.basePrice || 700000;
   const age = Math.max(0, new Date().getFullYear() - year);
+  const luxury = LUXURY_BRANDS.includes(brand);
   let depFactor = 1;
-  for (let y = 1; y <= age; y++) depFactor *= y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95;
+  for (let y = 1; y <= age; y++) {
+    depFactor *= luxury
+      ? (y <= 1 ? 0.75 : y <= 3 ? 0.82 : 0.85)
+      : (y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95);
+  }
   const expectedKm = age * 12000;
   const excessKm = Math.max(0, km - expectedKm);
   const kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
