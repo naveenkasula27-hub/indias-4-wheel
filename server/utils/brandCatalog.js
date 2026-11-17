@@ -11,6 +11,10 @@ const BRAND_CATALOG = {
       Swift: 650000, Baleno: 750000, Dzire: 700000, Ignis: 650000,
       Ertiga: 950000, XL6: 1150000, Brezza: 1100000, 'Grand Vitara': 1300000,
       Fronx: 850000, Jimny: 1350000, Eeco: 500000, Ciaz: 950000,
+      // Discontinued/legacy models — still common in "sell my car" submissions
+      // for older vehicles.
+      800: 250000, Omni: 350000, Zen: 300000, Esteem: 380000,
+      'Alto 800': 380000, Versa: 400000, 'Wagon R Duo': 420000,
     },
   },
   Hyundai: {
@@ -147,9 +151,16 @@ function listModels(brand) {
 
 function getBasePrice(brand, model) {
   const entry = BRAND_CATALOG[brand];
-  if (!entry) return 700000;
+  if (!entry) return 500000;
   if (model && entry.models[model] != null) return entry.models[model];
-  return entry.basePrice;
+  // Model typed but not in our list (common for discontinued/rare variants):
+  // assume it's more likely an older/cheaper trim than the brand's premium
+  // end, and default to that brand's cheapest known model instead of an
+  // arbitrary flat "brand price" — the old behaviour here overvalued every
+  // unlisted model (e.g. a scrapped-decades-ago Maruti 800) at the same
+  // price as a brand-new Swift, roughly double what it's actually worth.
+  const prices = Object.values(entry.models);
+  return prices.length ? Math.min(...prices) : entry.basePrice;
 }
 
 module.exports = { BRAND_CATALOG, listBrands, listModels, getBasePrice };
