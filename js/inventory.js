@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const filterPrice = document.getElementById('filterPrice');
   const sortBy = document.getElementById('sortBy');
 
+  grid.innerHTML = Array.from({ length: 8 }).map(() => '<div class="car-card skeleton-card"><div class="car-media"></div><div class="car-body"><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:50%"></div></div></div>').join('');
   const CARS = await loadCars();
 
   // Populate brand filter dynamically

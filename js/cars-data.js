@@ -118,7 +118,23 @@ const getCarById = (id) => CARS.find(c => c.id === id);
 // Fetches live inventory from the owner-managed backend (admin/config.js -> API_BASE).
 // Falls back to the static CARS array above if the API is unreachable, so the
 // site always renders even before the backend is deployed.
+//
+// Cached for 60s in sessionStorage: a Vercel serverless cold start + fresh
+// MongoDB connection can take 2-4s, which is fine once but painful on every
+// page navigation in the same browsing session, so repeat loads within the
+// window reuse the last response instead of re-paying that cost.
+const CARS_CACHE_KEY = 'i4w_cars_cache';
+const CARS_CACHE_TTL_MS = 60000;
+
 async function loadCars() {
+  try {
+    const cached = sessionStorage.getItem(CARS_CACHE_KEY);
+    if (cached) {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < CARS_CACHE_TTL_MS && Array.isArray(data) && data.length) return data;
+    }
+  } catch { /* corrupt cache entry, ignore and refetch */ }
+
   try {
     if (typeof API_BASE === 'undefined') throw new Error('no api base');
     const res = await fetch(`${API_BASE}/cars`);
@@ -126,11 +142,13 @@ async function loadCars() {
     const data = await res.json();
     if (!Array.isArray(data) || data.length === 0) throw new Error('empty');
     // Cars added without a photo borrow the matching static listing's image.
-    return data.map(c => {
+    const mapped = data.map(c => {
       const match = CARS.find(s => s.name === c.name) || CARS.find(s => s.brand === c.brand && s.bodyType === c.bodyType) || CARS[0];
       const photo = c.photo || match.photo;
       return { ...c, id: c._id, photo, interior: c.interior || match.interior || photo };
     });
+    try { sessionStorage.setItem(CARS_CACHE_KEY, JSON.stringify({ data: mapped, ts: Date.now() })); } catch { /* storage full/disabled, ignore */ }
+    return mapped;
   } catch {
     return CARS;
   }

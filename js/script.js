@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ---------- Build car inventory cards (live from owner dashboard, real photos) ---------- */
   const carGrid = document.getElementById('carGrid');
   if (carGrid && typeof loadCars === 'function') {
+    carGrid.innerHTML = Array.from({ length: 4 }).map(() => '<div class="car-card skeleton-card"><div class="car-media"></div><div class="car-body"><div class="skeleton-line" style="width:70%"></div><div class="skeleton-line" style="width:50%"></div></div></div>').join('');
     loadCars().then(cars => {
       carGrid.innerHTML = cars.slice(0, 8).map(c => `
         <a class="car-card" href="car-detail.html?id=${c.id}">
