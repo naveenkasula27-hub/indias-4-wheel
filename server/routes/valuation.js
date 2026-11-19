@@ -1,29 +1,31 @@
 const express = require('express');
 const { estimateValuation } = require('../utils/valuation');
-const { BRAND_CATALOG, listBrands, listModels, getBasePrice } = require('../utils/brandCatalog');
+const { BRAND_CATALOG, listBrands, listModels, getBasePrice, listVariants, getVariantMultiplier } = require('../utils/brandCatalog');
 const PriceOverride = require('../models/PriceOverride');
 const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-async function resolveBasePrice(brand, model) {
+async function resolveBasePrice(brand, model, variant) {
   const override = await PriceOverride.findOne({ brand, model });
-  return override ? override.basePrice : getBasePrice(brand, model);
+  const base = override ? override.basePrice : getBasePrice(brand, model);
+  return variant ? Math.round((base * getVariantMultiplier(brand, variant)) / 1000) * 1000 : base;
 }
 
 router.post('/', async (req, res) => {
-  const { brand, model, year, km, fuel, owners, city } = req.body;
+  const { brand, model, variant, year, km, fuel, owners, city } = req.body;
   if (!brand || !model || !year || km == null || !fuel || !city) {
     return res.status(400).json({ error: 'brand, model, year, km, fuel, city are required' });
   }
-  const basePriceOverride = await resolveBasePrice(brand, model);
+  const basePriceOverride = await resolveBasePrice(brand, model, variant);
   const result = estimateValuation({ brand, model, year, km, fuel, owners, city, basePriceOverride });
   res.json(result);
 });
 
-// Public: brand/model dropdown data
+// Public: brand/model/variant dropdown data
 router.get('/catalog/brands', (req, res) => res.json(listBrands()));
 router.get('/catalog/models/:brand', (req, res) => res.json(listModels(req.params.brand)));
+router.get('/catalog/variants/:brand/:model', (req, res) => res.json(listVariants(req.params.brand, req.params.model)));
 
 // Owner-only: view and edit the valuation starting price for every model
 router.get('/catalog/prices', requireAuth, async (req, res) => {

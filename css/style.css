@@ -154,6 +154,13 @@ select.city-select{border:none;cursor:pointer;font-family:inherit;font-size:14px
 .trust-item strong{display:block;font-size:14.5px;color:var(--navy);font-family:var(--ff-display);}
 .trust-item p{margin:2px 0 0;font-size:12.5px;color:var(--slate-light);}
 
+.whyus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px;}
+.whyus-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 24px;transition:transform 0.2s,box-shadow 0.2s;}
+.whyus-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+.whyus-ico{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--navy));color:#fff;font-size:19px;font-weight:700;margin-bottom:14px;}
+.whyus-card h4{font-family:var(--ff-display);font-size:16px;color:var(--navy);margin:0 0 8px;}
+.whyus-card p{margin:0;font-size:13.5px;color:var(--slate-light);line-height:1.55;}
+
 /* ---------- Sections ---------- */
 .section{padding:84px 0;}
 .section-alt{background:var(--bg-alt);}
@@ -365,6 +372,10 @@ select.city-select{border:none;cursor:pointer;font-family:inherit;font-size:14px
   .body-grid{grid-template-columns:repeat(3,1fr);}
   .financing-grid,.sell-grid,.app-banner-inner{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr 1fr;}
+  .whyus-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:640px){
+  .whyus-grid{grid-template-columns:1fr;}
 }
 @media (max-width:860px){
   .main-nav{display:none;}

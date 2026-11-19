@@ -31,6 +31,28 @@ const MIDSIZE_MODELS = new Set([
   'Kia::Seltos', 'Kia::Carens', 'Kia::Carnival',
 ]);
 
+const VARIANT_MULTIPLIERS = [0.87, 0.97, 1.08, 1.20];
+const VARIANT_NAMES_BY_BRAND = {
+  'Maruti Suzuki': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  Hyundai: ['E', 'EX', 'S', 'SX(O)'],
+  Tata: ['XE', 'XM', 'XZ', 'XZ+'],
+  Honda: ['SV', 'V', 'VX', 'ZX'],
+  Kia: ['HTE', 'HTK', 'HTX', 'GTX'],
+};
+const GENERIC_VARIANT_NAMES = ['Base', 'Mid', 'High', 'Top'];
+
+function fallbackListVariants(brand, model) {
+  const basePrice = fallbackBasePrice(brand, model);
+  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+  return names.map((name, i) => ({ name, price: Math.round(basePrice * VARIANT_MULTIPLIERS[i] / 1000) * 1000 }));
+}
+
+function fallbackVariantMultiplier(brand, variant) {
+  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+  const i = names.indexOf(variant);
+  return i >= 0 ? VARIANT_MULTIPLIERS[i] : 1;
+}
+
 function fallbackBasePrice(brand, model) {
   const entry = FALLBACK_CATALOG[brand];
   if (!entry) return 500000;
@@ -39,8 +61,9 @@ function fallbackBasePrice(brand, model) {
   return prices.length ? Math.min(...prices) : 500000;
 }
 
-function fallbackValuation({ brand, model, year, km, fuel, owners = 1, city }) {
-  const base = fallbackBasePrice(brand, model);
+function fallbackValuation({ brand, model, variant, year, km, fuel, owners = 1, city }) {
+  let base = fallbackBasePrice(brand, model);
+  if (variant) base = Math.round(base * fallbackVariantMultiplier(brand, variant) / 1000) * 1000;
   const age = Math.max(0, new Date().getFullYear() - year);
   const tier = LUXURY_BRANDS.includes(brand) ? 'luxury'
     : FALLBACK_CATALOG[brand]?.resaleTier === 'weak' ? 'weak'
@@ -129,9 +152,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     modelSelect.innerHTML = '<option value="">Select model</option>' +
       models.map(m => `<option>${m}</option>`).join('') +
       '<option value="__other__">Other / not listed</option>';
+    variantSelect.innerHTML = '<option value="">Select model first</option>';
   });
   modelSelect.addEventListener('change', () => {
     modelOtherInput.style.display = modelSelect.value === '__other__' ? 'block' : 'none';
+  });
+
+  // --- Variant dropdown depends on brand + model ---
+  const variantSelect = document.getElementById('fVariant');
+  modelSelect.addEventListener('change', async () => {
+    const brand = brandSelect.value;
+    const model = modelSelect.value;
+    if (!model || model === '__other__') {
+      variantSelect.innerHTML = '<option value="">No variant needed</option>';
+      return;
+    }
+    const requestedKey = `${brand}::${model}`;
+    let variants = fallbackListVariants(brand, model);
+    variantSelect.innerHTML = '<option value="">Loading variants...</option>';
+    try {
+      if (!apiBase) throw new Error('no api');
+      const res = await fetch(`${apiBase}/valuation/catalog/variants/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`);
+      if (!res.ok) throw new Error('api failed');
+      const apiVariants = await res.json();
+      if (Array.isArray(apiVariants) && apiVariants.length) variants = apiVariants;
+    } catch { /* use local fallback list */ }
+    if (`${brandSelect.value}::${modelSelect.value}` !== requestedKey) return;
+    variantSelect.innerHTML = '<option value="">Select variant (optional)</option>' +
+      variants.map(v => `<option value="${v.name}">${v.name} · ₹${v.price.toLocaleString('en-IN')}</option>`).join('');
   });
 
   // Populate year dropdown
@@ -194,6 +242,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const year = +yearSelect.value;
     const km = +document.getElementById('fKm').value;
     const fuel = document.getElementById('fFuel').value;
+    const variant = variantSelect.value;
     const owners = +document.getElementById('fOwners').value;
     const city = document.getElementById('fCity').value;
 
@@ -203,17 +252,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       const res = await fetch(`${apiBase}/valuation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ brand, model, year, km, fuel, owners, city }),
+        body: JSON.stringify({ brand, model, variant, year, km, fuel, owners, city }),
       });
       if (!res.ok) throw new Error('api failed');
       result = await res.json();
     } catch {
-      result = fallbackValuation({ brand, model, year, km, fuel, owners, city });
+      result = fallbackValuation({ brand, model, variant, year, km, fuel, owners, city });
     }
 
     document.getElementById('quoteAmount').textContent = `₹ ${result.estimate.toLocaleString('en-IN')}`;
     document.getElementById('quoteRange').textContent = `Expected range: ₹ ${result.low.toLocaleString('en-IN')} – ₹ ${result.high.toLocaleString('en-IN')}`;
-    document.getElementById('quoteCarName').textContent = `${brand} ${model} · ${year} · ${km.toLocaleString('en-IN')} km`;
+    document.getElementById('quoteCarName').textContent = `${brand} ${model}${variant ? ' ' + variant : ''} · ${year} · ${km.toLocaleString('en-IN')} km`;
     document.getElementById('quoteCityName').textContent = city || 'your city';
     window.__i4w_valuation = result.estimate;
   }
@@ -269,6 +318,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       city: document.getElementById('fCity').value,
       brand: brandSelect.value,
       model: getModelValue(),
+      variant: variantSelect.value,
       year: +yearSelect.value,
       km: +document.getElementById('fKm').value,
       fuel: document.getElementById('fFuel').value,

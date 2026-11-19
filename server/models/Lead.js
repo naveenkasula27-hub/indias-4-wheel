@@ -8,6 +8,7 @@ const leadSchema = new mongoose.Schema(
     city: { type: String, required: true },
     brand: { type: String, required: true },
     model: { type: String, required: true },
+    variant: { type: String, default: '' },
     year: { type: Number, required: true },
     km: { type: Number, required: true },
     fuel: { type: String, required: true },

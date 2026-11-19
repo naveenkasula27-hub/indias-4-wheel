@@ -142,16 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* ---------- Homepage EMI calculator (interactive — slider or typed) ---------- */
-  const hPrice = document.getElementById('homeEmiPriceSlider');
-  const hDown = document.getElementById('homeEmiDownSlider');
-  const hRate = document.getElementById('homeEmiRateSlider');
-  const hTenure = document.getElementById('homeEmiTenureSlider');
-  const hPriceInput = document.getElementById('homeEmiPriceInput');
-  const hDownInput = document.getElementById('homeEmiDownInput');
-  const hRateInput = document.getElementById('homeEmiRateInput');
-  const hTenureInput = document.getElementById('homeEmiTenureInput');
-
+  /* ---------- EMI calculator widgets (interactive — slider or typed) ---------- */
   function computeEmi(principal, annualRatePct, tenureMonths) {
     const r = annualRatePct / 12 / 100;
     if (r === 0) return Math.round(principal / tenureMonths);
@@ -159,57 +150,68 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.round((principal * r * factor) / (factor - 1));
   }
 
-  // The number inputs are the source of truth for the actual computation —
-  // a native range input silently snaps its own .value to the nearest
-  // `step` even when set from JS, so reading from the sliders here would
-  // quietly round away whatever exact number was typed (e.g. 12,34,000
-  // becoming 12,50,000). Sliders only drive the typed inputs, never vice versa.
-  function updateHomeEmi() {
-    if (!hPrice) return;
-    const price = +hPriceInput.value || 0;
-    const downAmount = Math.min(+hDownInput.value || 0, price);
-    const rate = +hRateInput.value || 0;
-    const tenure = +hTenureInput.value || 0;
-    const downPct = price > 0 ? Math.round((downAmount / price) * 100) : 0;
-    const emi = computeEmi(Math.max(0, price - downAmount), rate, tenure);
+  // One EMI widget = 4 slider+number pairs (price, down, rate, tenure) with
+  // a given id prefix (e.g. "homeEmi" -> homeEmiPriceSlider/homeEmiPriceInput).
+  // The number inputs are always the source of truth for computation — a
+  // native range input silently snaps its own .value to the nearest `step`
+  // even when set from JS, so reading from the sliders would quietly round
+  // away whatever exact number was typed (e.g. ₹12,34,000 becoming ₹12,50,000).
+  function setupEmiWidget(prefix) {
+    const price = document.getElementById(`${prefix}PriceSlider`);
+    if (!price) return;
+    const down = document.getElementById(`${prefix}DownSlider`);
+    const rate = document.getElementById(`${prefix}RateSlider`);
+    const tenure = document.getElementById(`${prefix}TenureSlider`);
+    const priceInput = document.getElementById(`${prefix}PriceInput`);
+    const downInput = document.getElementById(`${prefix}DownInput`);
+    const rateInput = document.getElementById(`${prefix}RateInput`);
+    const tenureInput = document.getElementById(`${prefix}TenureInput`);
 
-    document.getElementById('homeEmiPriceLabel').textContent = formatPrice(price);
-    document.getElementById('homeEmiDownLabel').textContent = `${downPct}% · ${formatPrice(downAmount)}`;
-    document.getElementById('homeEmiRateLabel').textContent = `${rate}%`;
-    document.getElementById('homeEmiTenureLabel').textContent = `${tenure} months`;
-    document.getElementById('homeEmiMonthly').textContent = `₹${emi.toLocaleString('en-IN')}`;
+    function update() {
+      const p = +priceInput.value || 0;
+      const downAmount = Math.min(+downInput.value || 0, p);
+      const r = +rateInput.value || 0;
+      const t = +tenureInput.value || 0;
+      const downPct = p > 0 ? Math.round((downAmount / p) * 100) : 0;
+      const emi = computeEmi(Math.max(0, p - downAmount), r, t);
+
+      document.getElementById(`${prefix}PriceLabel`).textContent = formatPrice(p);
+      document.getElementById(`${prefix}DownLabel`).textContent = `${downPct}% · ${formatPrice(downAmount)}`;
+      document.getElementById(`${prefix}RateLabel`).textContent = `${r}%`;
+      document.getElementById(`${prefix}TenureLabel`).textContent = `${t} months`;
+      document.getElementById(`${prefix}Monthly`).textContent = `₹${emi.toLocaleString('en-IN')}`;
+    }
+
+    // Slider moved -> sync its paired number input, then recompute.
+    price.addEventListener('input', () => { priceInput.value = price.value; update(); });
+    down.addEventListener('input', () => { downInput.value = Math.round(+price.value * (+down.value / 100)); update(); });
+    rate.addEventListener('input', () => { rateInput.value = rate.value; update(); });
+    tenure.addEventListener('input', () => { tenureInput.value = tenure.value; update(); });
+
+    // Number typed -> sync its paired slider (clamped to range), then recompute.
+    priceInput.addEventListener('input', () => {
+      price.value = Math.min(+price.max, Math.max(+price.min, +priceInput.value || 0));
+      update();
+    });
+    downInput.addEventListener('input', () => {
+      const p = +price.value || 1;
+      down.value = Math.min(80, Math.max(0, Math.round(((+downInput.value || 0) / p) * 100)));
+      update();
+    });
+    rateInput.addEventListener('input', () => {
+      rate.value = Math.min(+rate.max, Math.max(+rate.min, +rateInput.value || 0));
+      update();
+    });
+    tenureInput.addEventListener('input', () => {
+      tenure.value = Math.min(+tenure.max, Math.max(+tenure.min, +tenureInput.value || 0));
+      update();
+    });
+
+    update();
   }
 
-  // Slider moved -> sync its paired number input, then recompute.
-  hPrice?.addEventListener('input', () => { hPriceInput.value = hPrice.value; updateHomeEmi(); });
-  hDown?.addEventListener('input', () => { hDownInput.value = Math.round(+hPrice.value * (+hDown.value / 100)); updateHomeEmi(); });
-  hRate?.addEventListener('input', () => { hRateInput.value = hRate.value; updateHomeEmi(); });
-  hTenure?.addEventListener('input', () => { hTenureInput.value = hTenure.value; updateHomeEmi(); });
-
-  // Number typed -> sync its paired slider (clamped to the slider's range), then recompute.
-  hPriceInput?.addEventListener('input', () => {
-    const v = +hPriceInput.value || 0;
-    hPrice.value = Math.min(+hPrice.max, Math.max(+hPrice.min, v));
-    updateHomeEmi();
-  });
-  hDownInput?.addEventListener('input', () => {
-    const price = +hPrice.value || 1;
-    const pct = Math.min(80, Math.max(0, Math.round(((+hDownInput.value || 0) / price) * 100)));
-    hDown.value = pct;
-    updateHomeEmi();
-  });
-  hRateInput?.addEventListener('input', () => {
-    const v = +hRateInput.value || 0;
-    hRate.value = Math.min(+hRate.max, Math.max(+hRate.min, v));
-    updateHomeEmi();
-  });
-  hTenureInput?.addEventListener('input', () => {
-    const v = +hTenureInput.value || 0;
-    hTenure.value = Math.min(+hTenure.max, Math.max(+hTenure.min, v));
-    updateHomeEmi();
-  });
-
-  updateHomeEmi();
+  setupEmiWidget('homeEmi');
+  setupEmiWidget('quickEmi');
 
   /* ---------- Generic horizontal-scroll arrow buttons ---------- */
   document.querySelectorAll('.car-arrow').forEach(btn => {

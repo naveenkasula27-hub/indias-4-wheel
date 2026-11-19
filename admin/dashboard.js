@@ -192,7 +192,7 @@ async function loadLeads() {
   tbody.innerHTML = leads.map((l) => `
     <tr data-id="${l._id}" class="${!leadsFirstLoad && !seenLeadIds.has(l._id) ? 'lead-row-new' : ''}">
       <td>${l.name}<br><span style="color:var(--slate-light);font-size:12px;">${l.phone}</span></td>
-      <td>${l.brand} ${l.model} · ${l.year} · ${l.km.toLocaleString('en-IN')} km</td>
+      <td>${l.brand} ${l.model}${l.variant ? ' ' + l.variant : ''} · ${l.year} · ${l.km.toLocaleString('en-IN')} km</td>
       <td>₹ ${l.valuation.toLocaleString('en-IN')}</td>
       <td style="white-space:nowrap;">
         <input type="number" class="actual-sold-price" placeholder="₹ actual" style="width:100px;" value="${l.actualSoldPrice || ''}">

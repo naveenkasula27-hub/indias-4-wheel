@@ -209,4 +209,48 @@ function getResaleTier(brand, model) {
   return 'standard';
 }
 
-module.exports = { BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand, getResaleTier };
+// Variant (trim) pricing. Real variant spreads checked against actual
+// ex-showroom tables: Maruti Swift LXI ₹6.49L -> ZXI+ ₹9.0L and Hyundai
+// Creta E ₹10.9L -> SX ₹15.0L both work out to almost exactly the same
+// +38% spread from base to top trim, despite being completely different
+// models/segments/price points — so that spread is applied generically
+// to every brand+model rather than needing a researched price for every
+// single trim of every single car, which isn't practically achievable.
+// Our stored catalog price represents a mid-spec car (what the valuation
+// engine was calibrated against), so the multipliers are centered on it:
+// base trim is cheaper, top trim is pricier, by that same ratio.
+const VARIANT_MULTIPLIERS = [0.87, 0.97, 1.08, 1.20];
+
+// Real, well-established trim naming for the highest-volume brands.
+// Everything else gets a generic Base/Mid/High/Top label rather than a
+// guessed factory trim code, since naming conventions vary wildly brand
+// to brand (and even model to model within Mahindra/Toyota specifically).
+const VARIANT_NAMES_BY_BRAND = {
+  'Maruti Suzuki': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  Hyundai: ['E', 'EX', 'S', 'SX(O)'],
+  Tata: ['XE', 'XM', 'XZ', 'XZ+'],
+  Honda: ['SV', 'V', 'VX', 'ZX'],
+  Kia: ['HTE', 'HTK', 'HTX', 'GTX'],
+};
+const GENERIC_VARIANT_NAMES = ['Base', 'Mid', 'High', 'Top'];
+
+function listVariants(brand, model) {
+  if (!BRAND_CATALOG[brand] || !BRAND_CATALOG[brand].models[model]) return [];
+  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+  const basePrice = BRAND_CATALOG[brand].models[model];
+  return names.map((name, i) => ({
+    name,
+    price: Math.round((basePrice * VARIANT_MULTIPLIERS[i]) / 1000) * 1000,
+  }));
+}
+
+function getVariantMultiplier(brand, variant) {
+  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+  const i = names.indexOf(variant);
+  return i >= 0 ? VARIANT_MULTIPLIERS[i] : 1;
+}
+
+module.exports = {
+  BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand, getResaleTier,
+  listVariants, getVariantMultiplier,
+};
