@@ -168,6 +168,28 @@ function getBasePrice(brand, model) {
 // BMW X1 resale listings: ~15-16%/year, vs ~7-8%/year average for a Swift
 // or Creta) — thin resale demand and high running costs push used buyers
 // away from ageing luxury cars much harder than from an ageing hatchback.
+// Mid-size sedans/SUVs within otherwise strong-resale brands depreciate
+// meaningfully faster than that brand's small hatchbacks — confirmed via
+// Cars24's own comparison data (Hyundai Verna / Maruti Ciaz: ~44-45% value
+// loss at 5 years, i.e. ~55-56% retained) and the Autocar-Spinny compact-SUV
+// segment average (~57% retained at 5 years, covering Creta/Seltos/Nexon-
+// class cars), versus the ~70-73% a Swift or Dzire retains over the same
+// period. Reusing the hatchback curve for these was overvaluing them by
+// roughly 10-15 points — on a ₹10-15L car that's a ₹1L+ miss, which is
+// exactly what showed up as "nearly every car is off by a lakh or more":
+// sedans and mid-size SUVs are the most commonly submitted cars after
+// hatchbacks. Toyota and Mahindra are deliberately left out — both have a
+// specific, well-documented reputation for unusually strong resale in
+// India even in these segments, so forcing them onto this curve would be
+// guessing against the evidence rather than with it.
+const MIDSIZE_MODELS = new Set([
+  'Hyundai::Creta', 'Hyundai::Verna', 'Hyundai::Alcazar', 'Hyundai::Tucson',
+  'Maruti Suzuki::Ciaz', 'Maruti Suzuki::Ertiga', 'Maruti Suzuki::XL6',
+  'Maruti Suzuki::Brezza', 'Maruti Suzuki::Grand Vitara', 'Maruti Suzuki::S-Cross',
+  'Tata::Nexon', 'Tata::Harrier', 'Tata::Safari', 'Tata::Nexon EV',
+  'Kia::Seltos', 'Kia::Carens', 'Kia::Carnival',
+]);
+
 function isLuxuryBrand(brand) {
   return !!BRAND_CATALOG[brand]?.luxury;
 }
@@ -180,9 +202,11 @@ function isLuxuryBrand(brand) {
 // spare-parts availability; VW/Skoda/Citroen/Nissan/Isuzu carry a similar,
 // if less extreme, weak-resale reputation from higher perceived running
 // costs and thinner dealer networks.
-function getResaleTier(brand) {
+function getResaleTier(brand, model) {
   if (isLuxuryBrand(brand)) return 'luxury';
-  return BRAND_CATALOG[brand]?.resaleTier === 'weak' ? 'weak' : 'standard';
+  if (BRAND_CATALOG[brand]?.resaleTier === 'weak') return 'weak';
+  if (model && MIDSIZE_MODELS.has(`${brand}::${model}`)) return 'midsize';
+  return 'standard';
 }
 
 module.exports = { BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand, getResaleTier };

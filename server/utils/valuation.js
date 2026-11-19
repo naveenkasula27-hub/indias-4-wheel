@@ -19,15 +19,19 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
 
   // Depreciation curve, calibrated against the Autocar-Spinny used car
   // studies: Maruti Swift/Dzire retain ~70-73% of original price after 5
-  // years ("standard" tier below gives ~69-72%, matching); Honda City
-  // retains only ~50% over the same period, and Ford/Fiat/Chevrolet/Datsun
-  // (all exited India, crashing resale/parts demand) plus VW/Skoda/
-  // Citroen/Nissan/Isuzu (weaker dealer networks, higher perceived running
-  // cost) depreciate closer to that "weak" curve. Premium/luxury brands
-  // (BMW, Mercedes, Audi, Volvo, Jeep, Land Rover, MINI) depreciate fastest
-  // of all — checked real BMW X1 resale listings against its new price and
-  // found ~15-16%/year, not ~7-8%/year.
-  const tier = getResaleTier(brand);
+  // years ("standard" tier below gives ~69-72%, matching). Mid-size sedans
+  // and compact/mid SUVs (Creta, Verna, Seltos, Nexon, Ciaz, etc.) within
+  // these same strong brands depreciate meaningfully faster — Cars24 puts
+  // Verna/Ciaz value loss at ~44-45% over 5 years (~55-56% retained) — so
+  // they get their own steeper "midsize" curve rather than being treated
+  // like a hatchback. Honda City retains only ~50% over 5 years, and
+  // Ford/Fiat/Chevrolet/Datsun (all exited India, crashing resale/parts
+  // demand) plus VW/Skoda/Citroen/Nissan/Isuzu (weaker dealer networks,
+  // higher perceived running cost) depreciate close to that "weak" curve.
+  // Premium/luxury brands (BMW, Mercedes, Audi, Volvo, Jeep, Land Rover,
+  // MINI) depreciate fastest of all — checked real BMW X1 resale listings
+  // against its new price and found ~15-16%/year, not ~7-8%/year.
+  const tier = getResaleTier(brand, model);
   let depFactor = 1;
   for (let y = 1; y <= age; y++) {
     if (tier === 'luxury') {
@@ -37,6 +41,10 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
     } else if (tier === 'weak') {
       if (y <= 1) depFactor *= 0.83;
       else if (y <= 3) depFactor *= 0.86;
+      else depFactor *= 0.91;
+    } else if (tier === 'midsize') {
+      if (y <= 1) depFactor *= 0.86;
+      else if (y <= 3) depFactor *= 0.89;
       else depFactor *= 0.91;
     } else {
       if (y <= 1) depFactor *= 0.90;

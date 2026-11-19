@@ -23,6 +23,14 @@ const CITY_TIER = { Mumbai: 1.04, 'Delhi NCR': 1.03, Bengaluru: 1.03, Hyderabad:
 
 const LUXURY_BRANDS = ['Mercedes-Benz', 'BMW', 'Audi', 'Volvo', 'Jeep', 'Land Rover', 'MINI'];
 
+const MIDSIZE_MODELS = new Set([
+  'Hyundai::Creta', 'Hyundai::Verna', 'Hyundai::Alcazar', 'Hyundai::Tucson',
+  'Maruti Suzuki::Ciaz', 'Maruti Suzuki::Ertiga', 'Maruti Suzuki::XL6',
+  'Maruti Suzuki::Brezza', 'Maruti Suzuki::Grand Vitara',
+  'Tata::Nexon', 'Tata::Harrier', 'Tata::Safari', 'Tata::Nexon EV',
+  'Kia::Seltos', 'Kia::Carens', 'Kia::Carnival',
+]);
+
 function fallbackBasePrice(brand, model) {
   const entry = FALLBACK_CATALOG[brand];
   if (!entry) return 500000;
@@ -34,13 +42,18 @@ function fallbackBasePrice(brand, model) {
 function fallbackValuation({ brand, model, year, km, fuel, owners = 1, city }) {
   const base = fallbackBasePrice(brand, model);
   const age = Math.max(0, new Date().getFullYear() - year);
-  const tier = LUXURY_BRANDS.includes(brand) ? 'luxury' : (FALLBACK_CATALOG[brand]?.resaleTier === 'weak' ? 'weak' : 'standard');
+  const tier = LUXURY_BRANDS.includes(brand) ? 'luxury'
+    : FALLBACK_CATALOG[brand]?.resaleTier === 'weak' ? 'weak'
+    : MIDSIZE_MODELS.has(`${brand}::${model}`) ? 'midsize'
+    : 'standard';
   let depFactor = 1;
   for (let y = 1; y <= age; y++) {
     depFactor *= tier === 'luxury'
       ? (y <= 1 ? 0.75 : y <= 3 ? 0.82 : 0.85)
       : tier === 'weak'
       ? (y <= 1 ? 0.83 : y <= 3 ? 0.86 : 0.91)
+      : tier === 'midsize'
+      ? (y <= 1 ? 0.86 : y <= 3 ? 0.89 : 0.91)
       : (y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95);
   }
   const expectedKm = age * 12000;
