@@ -19,6 +19,7 @@
         <a href="#testdrives" class="nav-link" data-tab="testdrives">Test Drives</a>
         <a href="#messages" class="nav-link" data-tab="messages">Contact Messages</a>
         <a href="#pricing" class="nav-link" data-tab="pricing">Valuation Pricing</a>
+        <a href="#recalibration" class="nav-link" data-tab="recalibration">Recalibration Report</a>
         <a href="#account" class="nav-link" data-tab="account">Account</a>
       </nav>
       <button class="logout-btn" id="logoutBtn">Log Out</button>
@@ -113,6 +114,18 @@
           <table class="admin-table">
             <thead><tr><th>Brand</th><th>Model</th><th>Default Price</th><th>Current Price</th><th></th></tr></thead>
             <tbody id="pricingTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- RECALIBRATION TAB -->
+      <section id="tab-recalibration" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-head"><h3>Recalibration Report</h3></div>
+          <p style="color:var(--slate-light);font-size:13px;margin:0 0 14px;">Built from every lead where you've logged an Actual Sold Price. Shows how far the valuation formula drifted from reality for each brand/model, and a suggested multiplier to apply to that model's price in Valuation Pricing to correct it.</p>
+          <table class="admin-table">
+            <thead><tr><th>Brand</th><th>Model</th><th>Samples</th><th>Avg Estimate</th><th>Avg Actual</th><th>Drift</th><th>Suggested Correction</th></tr></thead>
+            <tbody id="recalibrationTableBody"></tbody>
           </table>
         </div>
       </section>

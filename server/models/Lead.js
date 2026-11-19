@@ -18,6 +18,10 @@ const leadSchema = new mongoose.Schema(
     // without redeploying code — the same idea behind Droom's OBV, just
     // starting from our own transaction history instead of theirs.
     actualSoldPrice: { type: Number, default: null },
+    // (actualSoldPrice - valuation) / actualSoldPrice * 100, stored at the
+    // moment actualSoldPrice is recorded so the drift report below doesn't
+    // need to re-run the valuation formula for historical leads.
+    priceDriftPct: { type: Number, default: null },
     loanEligibility: {
       monthlyIncome: Number,
       eligibleAmount: Number,

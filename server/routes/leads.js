@@ -47,9 +47,51 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 router.put('/:id', requireAuth, async (req, res) => {
-  const lead = await Lead.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const update = { ...req.body };
+  if (update.actualSoldPrice) {
+    const lead = await Lead.findById(req.params.id);
+    if (lead) {
+      update.priceDriftPct = ((update.actualSoldPrice - lead.valuation) / update.actualSoldPrice) * 100;
+    }
+  }
+  const lead = await Lead.findByIdAndUpdate(req.params.id, update, { new: true });
   if (!lead) return res.status(404).json({ error: 'Not found' });
   res.json(lead);
+});
+
+// Owner-only: recalibration report — average how far off the formula's
+// estimate has been from actual sold prices, grouped by brand+model, so
+// the Valuation Pricing overrides can be corrected with real evidence
+// instead of guesswork.
+router.get('/drift-report', requireAuth, async (req, res) => {
+  const rows = await Lead.aggregate([
+    { $match: { actualSoldPrice: { $ne: null } } },
+    {
+      $group: {
+        _id: { brand: '$brand', model: '$model' },
+        samples: { $sum: 1 },
+        avgValuation: { $avg: '$valuation' },
+        avgActualSoldPrice: { $avg: '$actualSoldPrice' },
+        avgDriftPct: { $avg: '$priceDriftPct' },
+      },
+    },
+    { $sort: { avgDriftPct: 1 } },
+  ]);
+
+  const report = rows.map((r) => ({
+    brand: r._id.brand,
+    model: r._id.model,
+    samples: r.samples,
+    avgValuation: Math.round(r.avgValuation),
+    avgActualSoldPrice: Math.round(r.avgActualSoldPrice),
+    avgDriftPct: +r.avgDriftPct.toFixed(1),
+    // Multiply the brand/model's current Valuation Pricing override (or
+    // catalog default) by this to bring future estimates in line with
+    // what this model has actually been selling for.
+    suggestedBaseMultiplier: +(r.avgActualSoldPrice / r.avgValuation).toFixed(3),
+  }));
+
+  res.json(report);
 });
 
 // Owner-only: run/re-run a loan eligibility check on an existing lead

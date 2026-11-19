@@ -20,20 +20,21 @@ async function api(path, opts = {}) {
 }
 
 // --- Tabs ---
-const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', account: 'Account' };
+const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', recalibration: 'Recalibration Report', account: 'Account' };
 document.querySelectorAll('.nav-link').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
     link.classList.add('active');
     const tab = link.dataset.tab;
-    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'account'].forEach((t) => {
+    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'recalibration', 'account'].forEach((t) => {
       document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     });
     document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
     if (tab === 'pricing') loadPricing();
     if (tab === 'testdrives') loadTestDrives();
     if (tab === 'messages') loadMessages();
+    if (tab === 'recalibration') loadRecalibration();
   });
 });
 
@@ -283,6 +284,44 @@ document.getElementById('pricingSearch')?.addEventListener('input', (e) => {
   const q = e.target.value.trim().toLowerCase();
   renderPricing(pricingRows.filter((r) => `${r.brand} ${r.model}`.toLowerCase().includes(q)));
 });
+
+// --- Recalibration report ---
+async function loadRecalibration() {
+  const [drift, prices] = await Promise.all([
+    api('/leads/drift-report').catch(() => []),
+    api('/valuation/catalog/prices').catch(() => []),
+  ]);
+  const priceMap = new Map(prices.map((p) => [`${p.brand}::${p.model}`, p.currentPrice]));
+
+  const tbody = document.getElementById('recalibrationTableBody');
+  tbody.innerHTML = drift.map((d) => {
+    const currentPrice = priceMap.get(`${d.brand}::${d.model}`);
+    const suggestedPrice = currentPrice ? Math.round(currentPrice * d.suggestedBaseMultiplier / 1000) * 1000 : null;
+    const driftColor = Math.abs(d.avgDriftPct) <= 8 ? 'var(--green,#1a9c4a)' : '#c0392b';
+    return `
+    <tr data-brand="${d.brand}" data-model="${d.model}" data-suggested="${suggestedPrice || ''}">
+      <td>${d.brand}</td>
+      <td>${d.model}</td>
+      <td>${d.samples}</td>
+      <td>₹ ${d.avgValuation.toLocaleString('en-IN')}</td>
+      <td>₹ ${d.avgActualSoldPrice.toLocaleString('en-IN')}</td>
+      <td style="color:${driftColor};font-weight:600;">${d.avgDriftPct > 0 ? '+' : ''}${d.avgDriftPct}%</td>
+      <td style="white-space:nowrap;">
+        ${suggestedPrice ? `₹ ${suggestedPrice.toLocaleString('en-IN')} <button class="btn-sm btn-save" data-action="apply-correction">Apply</button>` : '—'}
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="7" style="color:var(--slate-light);">No actual sold prices logged yet — record them in Sell-Car Leads to build this report.</td></tr>';
+
+  tbody.querySelectorAll('button[data-action="apply-correction"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      const basePrice = +row.dataset.suggested;
+      await api('/valuation/catalog/prices', { method: 'PUT', body: JSON.stringify({ brand: row.dataset.brand, model: row.dataset.model, basePrice }) });
+      alert(`${row.dataset.brand} ${row.dataset.model} price updated to ₹${basePrice.toLocaleString('en-IN')}.`);
+      loadRecalibration();
+    });
+  });
+}
 
 // --- Account ---
 document.getElementById('changePwBtn')?.addEventListener('click', async () => {
