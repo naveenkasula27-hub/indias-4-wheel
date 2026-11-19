@@ -94,3 +94,32 @@ table.admin-table input, table.admin-table select { padding: 6px 8px; border: 1p
   100% { background: transparent; }
 }
 tr.lead-row-new { animation: rowFlashIn 1.8s ease; }
+
+/* ============================================================
+   RESPONSIVE — the dashboard had zero mobile breakpoints: a fixed
+   230px sidebar plus 4-column grids would badly break on a phone.
+   ============================================================ */
+@media (max-width: 900px) {
+  .admin-shell { flex-direction: column; }
+  .admin-sidebar {
+    width: 100%; flex-direction: row; flex-wrap: wrap; align-items: center;
+    padding: 14px 16px; box-shadow: 0 2px 10px rgba(11,42,91,0.12);
+  }
+  .admin-sidebar .brand { margin-bottom: 0; }
+  .admin-sidebar .brand-sub { display: none; }
+  .admin-sidebar nav { flex-direction: row; flex-wrap: wrap; flex: 1 1 100%; order: 3; gap: 4px; margin-top: 10px; overflow-x: auto; }
+  .admin-sidebar nav a { white-space: nowrap; padding: 8px 10px; font-size: 12.5px; }
+  .admin-sidebar nav a.active { padding-left: 10px; border-left: none; border-bottom: 2px solid var(--orange); }
+  .admin-sidebar nav a:hover { padding-left: 10px; }
+  .logout-btn { order: 2; margin-left: auto; padding: 7px 12px; font-size: 12px; }
+  .admin-main { padding: 20px 16px; max-width: 100%; }
+  .admin-topbar { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .stat-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .add-car-form { grid-template-columns: 1fr 1fr; }
+  table.admin-table { display: block; overflow-x: auto; white-space: nowrap; }
+}
+@media (max-width: 480px) {
+  .stat-row { grid-template-columns: 1fr 1fr; }
+  .add-car-form { grid-template-columns: 1fr; }
+  .stat-card .stat-num { font-size: 24px; }
+}
