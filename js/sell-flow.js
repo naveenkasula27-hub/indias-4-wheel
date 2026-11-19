@@ -3,34 +3,44 @@
 // Fallback brand/model catalog + valuation/loan logic used when the backend
 // API (admin/config.js -> API_BASE) is unreachable, so the page always works.
 const FALLBACK_CATALOG = {
-  'Maruti Suzuki': { basePrice: 650000, models: ['Alto K10', 'S-Presso', 'Celerio', 'WagonR', 'Swift', 'Baleno', 'Dzire', 'Ignis', 'Ertiga', 'XL6', 'Brezza', 'Grand Vitara', 'Fronx', 'Jimny', 'Eeco', 'Ciaz'] },
-  Hyundai: { basePrice: 850000, models: ['Grand i10 Nios', 'i20', 'Aura', 'Venue', 'Creta', 'Verna', 'Alcazar', 'Exter', 'Tucson', 'Venue N Line'] },
-  Tata: { basePrice: 800000, models: ['Tiago', 'Tigor', 'Altroz', 'Punch', 'Nexon', 'Harrier', 'Safari', 'Tigor EV', 'Nexon EV', 'Punch EV'] },
-  Mahindra: { basePrice: 1150000, models: ['Bolero', 'Bolero Neo', 'XUV300', 'XUV400', 'Scorpio Classic', 'Scorpio-N', 'XUV700', 'Thar', 'Marazzo', 'KUV100'] },
-  Honda: { basePrice: 950000, models: ['Amaze', 'City', 'City Hybrid', 'Elevate', 'WR-V', 'Jazz'] },
-  Toyota: { basePrice: 1500000, models: ['Glanza', 'Urban Cruiser Taisor', 'Innova Crysta', 'Innova Hycross', 'Fortuner', 'Hilux', 'Camry', 'Hyryder', 'Rumion'] },
-  Kia: { basePrice: 1050000, models: ['Sonet', 'Seltos', 'Carens', 'Carnival', 'EV6'] },
-  MG: { basePrice: 1300000, models: ['Astor', 'Hector', 'Hector Plus', 'ZS EV', 'Comet EV', 'Gloster'] },
-  Skoda: { basePrice: 1200000, models: ['Slavia', 'Kushaq', 'Octavia', 'Superb', 'Kodiaq'] },
-  Volkswagen: { basePrice: 1150000, models: ['Virtus', 'Taigun', 'Tiguan', 'Vento', 'Polo'] },
-  Renault: { basePrice: 600000, models: ['Kwid', 'Triber', 'Kiger'] },
-  Nissan: { basePrice: 700000, models: ['Magnite', 'Kicks'] },
-  Ford: { basePrice: 750000, models: ['EcoSport', 'Figo', 'Aspire', 'Endeavour', 'Freestyle'] },
-  Jeep: { basePrice: 2000000, models: ['Compass', 'Meridian', 'Wrangler'] },
+  'Maruti Suzuki': { models: { 'Alto K10': 450000, 'S-Presso': 480000, Celerio: 550000, WagonR: 550000, Swift: 670000, Baleno: 720000, Dzire: 700000, Ignis: 650000, Ertiga: 950000, XL6: 1150000, Brezza: 1100000, 'Grand Vitara': 1300000, Fronx: 850000, Jimny: 1350000, Eeco: 500000, Ciaz: 950000 } },
+  Hyundai: { models: { 'Grand i10 Nios': 600000, i20: 700000, Aura: 700000, Venue: 900000, Creta: 1200000, Verna: 1050000, Alcazar: 1600000, Exter: 750000, Tucson: 2700000, 'Venue N Line': 1150000 } },
+  Tata: { models: { Tiago: 580000, Tigor: 700000, Altroz: 720000, Punch: 620000, Nexon: 950000, Harrier: 1600000, Safari: 1800000, 'Tigor EV': 1300000, 'Nexon EV': 1500000, 'Punch EV': 1100000 } },
+  Mahindra: { models: { Bolero: 950000, 'Bolero Neo': 1000000, XUV300: 750000, XUV400: 1700000, 'Scorpio Classic': 1400000, 'Scorpio-N': 1600000, XUV700: 2000000, Thar: 1350000, Marazzo: 1400000, KUV100: 550000 } },
+  Honda: { resaleTier: 'weak', models: { Amaze: 680000, City: 1120000, 'City Hybrid': 1900000, Elevate: 1300000, 'WR-V': 780000, Jazz: 900000 } },
+  Toyota: { models: { Glanza: 720000, 'Urban Cruiser Taisor': 780000, 'Innova Crysta': 2000000, 'Innova Hycross': 2200000, Fortuner: 3600000, Hilux: 3800000, Camry: 4500000, Hyryder: 1400000, Rumion: 950000 } },
+  Kia: { models: { Sonet: 900000, Seltos: 1250000, Carens: 1300000, Carnival: 3200000, EV6: 6500000 } },
+  MG: { models: { Astor: 1250000, Hector: 1450000, 'Hector Plus': 1450000, 'ZS EV': 2200000, 'Comet EV': 850000, Gloster: 3700000 } },
+  Skoda: { resaleTier: 'weak', models: { Slavia: 1150000, Kushaq: 1150000, Octavia: 1500000, Superb: 2200000, Kodiaq: 2600000 } },
+  Volkswagen: { resaleTier: 'weak', models: { Virtus: 1050000, Taigun: 1150000, Tiguan: 3900000, Vento: 850000, Polo: 750000 } },
+  Renault: { models: { Kwid: 450000, Triber: 650000, Kiger: 700000 } },
+  Nissan: { resaleTier: 'weak', models: { Magnite: 650000, Kicks: 1100000 } },
+  Ford: { resaleTier: 'weak', models: { EcoSport: 850000, Figo: 550000, Aspire: 500000, Endeavour: 3400000, Freestyle: 550000 } },
+  Jeep: { luxury: true, models: { Compass: 2100000, Meridian: 3200000, Wrangler: 7000000 } },
 };
 
 const CITY_TIER = { Mumbai: 1.04, 'Delhi NCR': 1.03, Bengaluru: 1.03, Hyderabad: 1.0, Pune: 1.0, Chennai: 0.99, Kolkata: 0.97 };
 
 const LUXURY_BRANDS = ['Mercedes-Benz', 'BMW', 'Audi', 'Volvo', 'Jeep', 'Land Rover', 'MINI'];
 
-function fallbackValuation({ brand, year, km, fuel, owners = 1, city }) {
-  const base = FALLBACK_CATALOG[brand]?.basePrice || 700000;
+function fallbackBasePrice(brand, model) {
+  const entry = FALLBACK_CATALOG[brand];
+  if (!entry) return 500000;
+  if (model && entry.models[model] != null) return entry.models[model];
+  const prices = Object.values(entry.models);
+  return prices.length ? Math.min(...prices) : 500000;
+}
+
+function fallbackValuation({ brand, model, year, km, fuel, owners = 1, city }) {
+  const base = fallbackBasePrice(brand, model);
   const age = Math.max(0, new Date().getFullYear() - year);
-  const luxury = LUXURY_BRANDS.includes(brand);
+  const tier = LUXURY_BRANDS.includes(brand) ? 'luxury' : (FALLBACK_CATALOG[brand]?.resaleTier === 'weak' ? 'weak' : 'standard');
   let depFactor = 1;
   for (let y = 1; y <= age; y++) {
-    depFactor *= luxury
+    depFactor *= tier === 'luxury'
       ? (y <= 1 ? 0.75 : y <= 3 ? 0.82 : 0.85)
+      : tier === 'weak'
+      ? (y <= 1 ? 0.83 : y <= 3 ? 0.86 : 0.91)
       : (y <= 1 ? 0.90 : y <= 3 ? 0.92 : 0.95);
   }
   const expectedKm = age * 12000;
@@ -38,15 +48,16 @@ function fallbackValuation({ brand, year, km, fuel, owners = 1, city }) {
   let kmPenalty;
   if (kmRatio < 1) {
     const underrun = Math.min(1, 1 - kmRatio);
-    kmPenalty = 1 + underrun * 0.15;
+    kmPenalty = 1 + underrun * 0.10;
   } else {
     const excessKm = km - expectedKm;
     kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
   }
-  const ownerPenalty = owners <= 1 ? 1.05 : Math.max(0.85, 1 - (owners - 1) * 0.05);
+  const ownerPenalty = owners <= 1 ? 1.03 : Math.max(0.85, 1 - (owners - 1) * 0.05);
   const fuelAdj = fuel === 'Electric' ? 1.05 : fuel === 'Diesel' ? 1.02 : fuel === 'CNG' ? 1.01 : 1;
   const cityAdj = CITY_TIER[city] || 1.0;
   let estimate = base * depFactor * kmPenalty * ownerPenalty * fuelAdj * cityAdj;
+  estimate = Math.min(estimate, base);
   estimate = Math.round(estimate / 1000) * 1000;
   estimate = Math.max(estimate, 40000);
   return { estimate, low: Math.round(estimate * 0.95 / 1000) * 1000, high: Math.round(estimate * 1.05 / 1000) * 1000 };
@@ -179,7 +190,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!res.ok) throw new Error('api failed');
       result = await res.json();
     } catch {
-      result = fallbackValuation({ brand, year, km, fuel, owners, city });
+      result = fallbackValuation({ brand, model, year, km, fuel, owners, city });
     }
 
     document.getElementById('quoteAmount').textContent = `₹ ${result.estimate.toLocaleString('en-IN')}`;

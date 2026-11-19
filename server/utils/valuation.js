@@ -1,4 +1,4 @@
-const { getBasePrice, isLuxuryBrand } = require('./brandCatalog');
+const { getBasePrice, getResaleTier } = require('./brandCatalog');
 
 // City tier multiplier — demand/resale strength differs by market tier.
 const CITY_TIER = {
@@ -17,20 +17,27 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
   const currentYear = new Date().getFullYear();
   const age = Math.max(0, currentYear - Number(year));
 
-  // Depreciation curve, calibrated against real listed resale prices for
-  // comparable cars (same model/age/km) on public marketplaces: ~10% yr1,
-  // ~8% yr2-3, ~5%/yr from yr4 onward (compounding) for mass-market cars.
-  // Premium/luxury brands (BMW, Mercedes, Audi, Volvo, Jeep, Land Rover,
-  // MINI) depreciate much faster — checked real BMW X1 resale listings
-  // against its new price and found ~15-16%/year, not ~7-8%/year — so they
-  // use a steeper curve: ~25% yr1, ~18% yr2-3, ~15%/yr from yr4 onward.
-  const luxury = isLuxuryBrand(brand);
+  // Depreciation curve, calibrated against the Autocar-Spinny used car
+  // studies: Maruti Swift/Dzire retain ~70-73% of original price after 5
+  // years ("standard" tier below gives ~69-72%, matching); Honda City
+  // retains only ~50% over the same period, and Ford/Fiat/Chevrolet/Datsun
+  // (all exited India, crashing resale/parts demand) plus VW/Skoda/
+  // Citroen/Nissan/Isuzu (weaker dealer networks, higher perceived running
+  // cost) depreciate closer to that "weak" curve. Premium/luxury brands
+  // (BMW, Mercedes, Audi, Volvo, Jeep, Land Rover, MINI) depreciate fastest
+  // of all — checked real BMW X1 resale listings against its new price and
+  // found ~15-16%/year, not ~7-8%/year.
+  const tier = getResaleTier(brand);
   let depFactor = 1;
   for (let y = 1; y <= age; y++) {
-    if (luxury) {
+    if (tier === 'luxury') {
       if (y <= 1) depFactor *= 0.75;
       else if (y <= 3) depFactor *= 0.82;
       else depFactor *= 0.85;
+    } else if (tier === 'weak') {
+      if (y <= 1) depFactor *= 0.83;
+      else if (y <= 3) depFactor *= 0.86;
+      else depFactor *= 0.91;
     } else {
       if (y <= 1) depFactor *= 0.90;
       else if (y <= 3) depFactor *= 0.92;
@@ -40,14 +47,16 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
 
   // Mileage: 12,000 km/year is the baseline. Driven less than that earns a
   // premium (low-mileage cars are genuinely sought after), driven more
-  // costs a penalty — both capped so a single extreme value can't dominate.
+  // costs a penalty — both capped so a single extreme value can't dominate,
+  // and kept modest so it can't combine with the ownership premium to push
+  // a used car above what the depreciation curve already says it's worth.
   const expectedKm = age * 12000;
   const kmRatio = expectedKm > 0 ? Number(km) / expectedKm : 1;
   let kmPenalty;
   if (kmRatio < 1) {
-    // Up to +15% for a car driven at 50% or less of the expected mileage.
+    // Up to +10% for a car driven at 50% or less of the expected mileage.
     const underrun = Math.min(1, 1 - kmRatio);
-    kmPenalty = 1 + underrun * 0.15;
+    kmPenalty = 1 + underrun * 0.10;
   } else {
     const excessKm = Number(km) - expectedKm;
     kmPenalty = Math.max(0.55, 1 - (excessKm / 10000) * 0.02);
@@ -55,7 +64,7 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
 
   // Ownership: each additional owner beyond the first knocks resale value;
   // a confirmed single owner earns a small premium over the baseline.
-  const ownerPenalty = owners <= 1 ? 1.05 : Math.max(0.85, 1 - (owners - 1) * 0.05);
+  const ownerPenalty = owners <= 1 ? 1.03 : Math.max(0.85, 1 - (owners - 1) * 0.05);
 
   // Fuel type: EVs and diesels currently hold value slightly differently.
   const fuelAdj = fuel === 'Electric' ? 1.05 : fuel === 'Diesel' ? 1.02 : fuel === 'CNG' ? 1.01 : 1;
@@ -63,6 +72,10 @@ function estimateValuation({ brand, model, year, km, fuel, owners = 1, city, bas
   const cityAdj = CITY_TIER[city] || 1.0;
 
   let estimate = base * depFactor * kmPenalty * ownerPenalty * fuelAdj * cityAdj;
+  // A used car — however well kept — can never be worth more than the same
+  // model bought new today; low-mileage/single-owner premiums must not be
+  // able to push the estimate past that ceiling.
+  estimate = Math.min(estimate, base);
   estimate = Math.round(estimate / 1000) * 1000;
   estimate = Math.max(estimate, 40000);
 

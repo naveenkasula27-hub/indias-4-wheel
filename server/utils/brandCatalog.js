@@ -42,7 +42,7 @@ const BRAND_CATALOG = {
     },
   },
   Honda: {
-    basePrice: 950000,
+    basePrice: 950000, resaleTier: 'weak',
     models: {
       Amaze: 680000, City: 1120000, 'City Hybrid': 1900000, Elevate: 1300000,
       'WR-V': 780000, Jazz: 900000,
@@ -68,11 +68,11 @@ const BRAND_CATALOG = {
     },
   },
   Skoda: {
-    basePrice: 1200000,
+    basePrice: 1200000, resaleTier: 'weak',
     models: { Slavia: 1150000, Kushaq: 1150000, Octavia: 1500000, Superb: 2200000, Kodiaq: 2600000 },
   },
   Volkswagen: {
-    basePrice: 1150000,
+    basePrice: 1150000, resaleTier: 'weak',
     models: { Virtus: 1050000, Taigun: 1150000, Tiguan: 3900000, Vento: 850000, Polo: 750000 },
   },
   Renault: {
@@ -80,11 +80,11 @@ const BRAND_CATALOG = {
     models: { Kwid: 450000, Triber: 650000, Kiger: 700000 },
   },
   Nissan: {
-    basePrice: 700000,
+    basePrice: 700000, resaleTier: 'weak',
     models: { Magnite: 650000, Kicks: 1100000 },
   },
   Ford: {
-    basePrice: 750000,
+    basePrice: 750000, resaleTier: 'weak',
     models: { EcoSport: 850000, Figo: 550000, Aspire: 500000, Endeavour: 3400000, Freestyle: 550000 },
   },
   Jeep: {
@@ -108,7 +108,7 @@ const BRAND_CATALOG = {
     models: { XC40: 4500000, XC60: 6500000, XC90: 9500000, S90: 6200000 },
   },
   Citroen: {
-    basePrice: 900000,
+    basePrice: 900000, resaleTier: 'weak',
     models: { C3: 650000, 'C3 Aircross': 1000000, 'eC3': 1300000, Basalt: 1100000 },
   },
   BYD: {
@@ -124,19 +124,19 @@ const BRAND_CATALOG = {
     models: { Cooper: 4200000, Countryman: 5000000 },
   },
   Chevrolet: {
-    basePrice: 550000,
+    basePrice: 550000, resaleTier: 'weak',
     models: { Beat: 400000, Spark: 400000, Cruze: 900000, Tavera: 700000 },
   },
   Datsun: {
-    basePrice: 450000,
+    basePrice: 450000, resaleTier: 'weak',
     models: { GO: 400000, 'GO+': 450000, redi_GO: 350000 },
   },
   Fiat: {
-    basePrice: 600000,
+    basePrice: 600000, resaleTier: 'weak',
     models: { Punto: 550000, Linea: 650000, Avventura: 700000 },
   },
   Isuzu: {
-    basePrice: 1600000,
+    basePrice: 1600000, resaleTier: 'weak',
     models: { 'D-Max': 1600000, MUX: 3300000, 'V-Cross': 2000000 },
   },
 };
@@ -172,4 +172,17 @@ function isLuxuryBrand(brand) {
   return !!BRAND_CATALOG[brand]?.luxury;
 }
 
-module.exports = { BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand };
+// Resale strength tier — Indian used-car demand/parts-availability isn't
+// uniform across brands even outside the luxury tier. Honda specifically
+// (Autocar-Spinny used car study) retains only ~50% after 5 years vs ~70-73%
+// for Maruti Swift/Dzire over the same period. Ford/Fiat/Chevrolet/Datsun
+// have exited the Indian market entirely, which crashes resale demand and
+// spare-parts availability; VW/Skoda/Citroen/Nissan/Isuzu carry a similar,
+// if less extreme, weak-resale reputation from higher perceived running
+// costs and thinner dealer networks.
+function getResaleTier(brand) {
+  if (isLuxuryBrand(brand)) return 'luxury';
+  return BRAND_CATALOG[brand]?.resaleTier === 'weak' ? 'weak' : 'standard';
+}
+
+module.exports = { BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand, getResaleTier };
