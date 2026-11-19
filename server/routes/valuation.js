@@ -9,7 +9,7 @@ const router = express.Router();
 async function resolveBasePrice(brand, model, variant) {
   const override = await PriceOverride.findOne({ brand, model });
   const base = override ? override.basePrice : getBasePrice(brand, model);
-  return variant ? Math.round((base * getVariantMultiplier(brand, variant)) / 1000) * 1000 : base;
+  return variant ? Math.round((base * getVariantMultiplier(brand, model, variant)) / 1000) * 1000 : base;
 }
 
 router.post('/', async (req, res) => {

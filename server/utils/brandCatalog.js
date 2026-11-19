@@ -209,45 +209,251 @@ function getResaleTier(brand, model) {
   return 'standard';
 }
 
-// Variant (trim) pricing. Real variant spreads checked against actual
-// ex-showroom tables: Maruti Swift LXI ₹6.49L -> ZXI+ ₹9.0L and Hyundai
-// Creta E ₹10.9L -> SX ₹15.0L both work out to almost exactly the same
-// +38% spread from base to top trim, despite being completely different
-// models/segments/price points — so that spread is applied generically
-// to every brand+model rather than needing a researched price for every
-// single trim of every single car, which isn't practically achievable.
-// Our stored catalog price represents a mid-spec car (what the valuation
-// engine was calibrated against), so the multipliers are centered on it:
-// base trim is cheaper, top trim is pricier, by that same ratio.
-const VARIANT_MULTIPLIERS = [0.87, 0.97, 1.08, 1.20];
+// Variant (trim) pricing — real factory trim names per model, not a
+// generic Base/Mid/High/Top label, and not one fixed set of names reused
+// across every model of a brand (a Maruti hatchback uses LXI/VXI/ZXI, but
+// a Maruti SUV like Grand Vitara/Fronx/Baleno/Ciaz uses Sigma/Delta/Zeta/
+// Alpha — same brand, different naming, because they're different
+// platforms). Engine/powertrain is folded into the name where that's how
+// the actual lineup is split (Innova Crysta's diesel-only trims vs
+// Innova Hycross's petrol/hybrid split, Fortuner's 4x2/4x4 split, etc.),
+// matching the example given: "Innova 2.0" / "Innova 2.4" style naming.
+// Spread checked against real ex-showroom tables: Swift LXI->ZXI+ and
+// Creta E->SX both independently work out to ~+38% base-to-top — so
+// that ratio sets the price gap between whatever the real trim names are,
+// scaled evenly across however many trims a given model actually has.
+const VARIANT_SPREAD_MIN = 0.87;
+const VARIANT_SPREAD_MAX = 1.20;
 
-// Real, well-established trim naming for the highest-volume brands.
-// Everything else gets a generic Base/Mid/High/Top label rather than a
-// guessed factory trim code, since naming conventions vary wildly brand
-// to brand (and even model to model within Mahindra/Toyota specifically).
-const VARIANT_NAMES_BY_BRAND = {
-  'Maruti Suzuki': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
-  Hyundai: ['E', 'EX', 'S', 'SX(O)'],
-  Tata: ['XE', 'XM', 'XZ', 'XZ+'],
-  Honda: ['SV', 'V', 'VX', 'ZX'],
-  Kia: ['HTE', 'HTK', 'HTX', 'GTX'],
+const VARIANT_NAMES_BY_MODEL = {
+  // Maruti Suzuki
+  'Maruti Suzuki::Alto K10': ['STD', 'LXI', 'VXI', 'VXI+'],
+  'Maruti Suzuki::S-Presso': ['STD', 'LXI', 'VXI', 'VXI+'],
+  'Maruti Suzuki::Celerio': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::WagonR': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::Swift': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::Baleno': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::Dzire': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::Ignis': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::Ertiga': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::XL6': ['Zeta', 'Alpha', 'Alpha+'],
+  'Maruti Suzuki::Brezza': ['LXI', 'VXI', 'ZXI', 'ZXI+'],
+  'Maruti Suzuki::Grand Vitara': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::Fronx': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::Jimny': ['Zeta', 'Alpha'],
+  'Maruti Suzuki::Eeco': ['STD 5-Str', '5-Str AC', '7-Str AC', 'Cargo'],
+  'Maruti Suzuki::Ciaz': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::S-Cross': ['Sigma', 'Delta', 'Zeta', 'Alpha'],
+  'Maruti Suzuki::800': ['Std', 'DX'],
+  'Maruti Suzuki::Omni': ['Std', 'DX'],
+  'Maruti Suzuki::Zen': ['LX', 'VX'],
+  'Maruti Suzuki::Esteem': ['LX', 'VX'],
+  'Maruti Suzuki::Alto 800': ['Std', 'LXI', 'VXI'],
+  'Maruti Suzuki::Versa': ['DX', 'DX2'],
+  'Maruti Suzuki::Wagon R Duo': ['LX', 'VX'],
+
+  // Hyundai
+  'Hyundai::Grand i10 Nios': ['Era', 'Magna', 'Sportz', 'Asta'],
+  'Hyundai::i20': ['Era', 'Magna', 'Sportz', 'Asta'],
+  'Hyundai::Aura': ['Era', 'S', 'SX', 'SX(O)'],
+  'Hyundai::Venue': ['E', 'S', 'SX', 'SX(O)'],
+  'Hyundai::Creta': ['E', 'EX', 'S', 'SX(O)'],
+  'Hyundai::Verna': ['EX', 'S', 'SX', 'SX(O)'],
+  'Hyundai::Alcazar': ['Prestige', 'Platinum', 'Signature'],
+  'Hyundai::Exter': ['EX', 'S', 'SX', 'SX(O)'],
+  'Hyundai::Tucson': ['Platinum', 'Signature'],
+  'Hyundai::Venue N Line': ['N6', 'N8'],
+  'Hyundai::Eon': ['D-Lite', 'Era', 'Magna'],
+
+  // Tata
+  'Tata::Tiago': ['XE', 'XM', 'XZ', 'XZ+'],
+  'Tata::Tigor': ['XE', 'XM', 'XZ', 'XZ+'],
+  'Tata::Altroz': ['XE', 'XM', 'XZ', 'XZ+'],
+  'Tata::Punch': ['Pure', 'Adventure', 'Accomplished', 'Creative'],
+  'Tata::Nexon': ['Smart', 'Pure', 'Creative', 'Fearless'],
+  'Tata::Harrier': ['Smart', 'Pure', 'Adventure', 'Fearless'],
+  'Tata::Safari': ['Smart', 'Pure', 'Adventure', 'Fearless'],
+  'Tata::Tigor EV': ['XE', 'XM', 'XZ+'],
+  'Tata::Nexon EV': ['Creative', 'Fearless', 'Empowered'],
+  'Tata::Punch EV': ['Smart', 'Creative', 'Empowered'],
+
+  // Mahindra
+  'Mahindra::Bolero': ['B4', 'B6'],
+  'Mahindra::Bolero Neo': ['N4', 'N8', 'N10'],
+  'Mahindra::XUV300': ['W4', 'W6', 'W8', 'W8(O)'],
+  'Mahindra::XUV400': ['EC', 'EL Pro'],
+  'Mahindra::Scorpio Classic': ['S', 'S11'],
+  'Mahindra::Scorpio-N': ['Z2', 'Z4', 'Z6', 'Z8'],
+  'Mahindra::XUV700': ['MX', 'AX3', 'AX5', 'AX7'],
+  'Mahindra::Thar': ['AX', 'LX'],
+  'Mahindra::Marazzo': ['M2', 'M4', 'M6', 'M8'],
+  'Mahindra::KUV100': ['K2', 'K4', 'K6', 'K8'],
+  'Mahindra::XUV500': ['W6', 'W8', 'W10', 'W11'],
+
+  // Honda
+  'Honda::Amaze': ['E', 'S', 'V', 'VX'],
+  'Honda::City': ['SV', 'V', 'VX', 'ZX'],
+  'Honda::City Hybrid': ['V', 'ZX'],
+  'Honda::Elevate': ['SV', 'V', 'VX', 'ZX'],
+  'Honda::WR-V': ['SV', 'VX'],
+  'Honda::Jazz': ['E', 'S', 'V', 'VX'],
+
+  // Toyota
+  'Toyota::Glanza': ['E', 'S', 'G', 'V'],
+  'Toyota::Urban Cruiser Taisor': ['E', 'S', 'G', 'V'],
+  'Toyota::Innova Crysta': ['GX 2.4 Diesel', 'VX 2.4 Diesel', 'ZX 2.4 Diesel', 'ZX O 2.4 Diesel'],
+  'Toyota::Innova Hycross': ['G 2.0 Petrol', 'GX 2.0 Petrol', 'VX 2.0 Hybrid', 'ZX 2.0 Hybrid'],
+  'Toyota::Fortuner': ['2.7 4x2 MT', '2.8 4x2 AT', '2.8 4x4 AT', 'Legender'],
+  'Toyota::Hilux': ['STD 4x4 MT', 'High 4x4 AT'],
+  'Toyota::Camry': ['Hybrid'],
+  'Toyota::Hyryder': ['E', 'S', 'G', 'V'],
+  'Toyota::Rumion': ['G', 'V'],
+
+  // Kia
+  'Kia::Sonet': ['HTE', 'HTK', 'HTX', 'GTX'],
+  'Kia::Seltos': ['HTE', 'HTK', 'HTX', 'GTX+'],
+  'Kia::Carens': ['Premium', 'Prestige', 'Prestige+', 'Luxury'],
+  'Kia::Carnival': ['Premium', 'Prestige', 'Limousine'],
+  'Kia::EV6': ['GT Line'],
+
+  // MG
+  'MG::Astor': ['Style', 'Super', 'Smart', 'Sharp'],
+  'MG::Hector': ['Style', 'Super', 'Smart', 'Sharp'],
+  'MG::Hector Plus': ['Style', 'Super', 'Smart', 'Sharp'],
+  'MG::ZS EV': ['Excite', 'Exclusive'],
+  'MG::Comet EV': ['Pace', 'Play'],
+  'MG::Gloster': ['Super', 'Smart', 'Sharp'],
+
+  // Skoda
+  'Skoda::Slavia': ['Active', 'Ambition', 'Style', 'Matte Edition'],
+  'Skoda::Kushaq': ['Active', 'Ambition', 'Style', 'Monte Carlo'],
+  'Skoda::Octavia': ['Style', 'L&K'],
+  'Skoda::Superb': ['Sportline', 'L&K'],
+  'Skoda::Kodiaq': ['Style', 'Sportline', 'L&K'],
+
+  // Volkswagen
+  'Volkswagen::Virtus': ['Curline', 'Comfortline', 'Highline', 'GT Line'],
+  'Volkswagen::Taigun': ['Comfortline', 'Highline', 'GT Line', 'GT Plus Line'],
+  'Volkswagen::Tiguan': ['Elegance'],
+  'Volkswagen::Vento': ['Trendline', 'Comfortline', 'Highline'],
+  'Volkswagen::Polo': ['Trendline', 'Comfortline', 'Highline', 'GT'],
+
+  // Renault
+  'Renault::Kwid': ['STD', 'RXE', 'RXL', 'Climber'],
+  'Renault::Triber': ['RXE', 'RXL', 'RXZ'],
+  'Renault::Kiger': ['RXE', 'RXL', 'RXT', 'RXZ'],
+
+  // Nissan
+  'Nissan::Magnite': ['XE', 'XL', 'XV', 'XV Premium'],
+  'Nissan::Kicks': ['XL', 'XV', 'XV Premium'],
+
+  // Ford (exited India)
+  'Ford::EcoSport': ['Ambiente', 'Trend', 'Titanium'],
+  'Ford::Figo': ['Ambiente', 'Trend', 'Titanium'],
+  'Ford::Aspire': ['Ambiente', 'Trend', 'Titanium'],
+  'Ford::Endeavour': ['Trend', 'Titanium', 'Titanium+'],
+  'Ford::Freestyle': ['Ambiente', 'Trend', 'Titanium'],
+
+  // Jeep
+  'Jeep::Compass': ['Sport', 'Longitude', 'Limited'],
+  'Jeep::Meridian': ['Longitude', 'Limited'],
+  'Jeep::Wrangler': ['Rubicon'],
+
+  // Mercedes-Benz
+  'Mercedes-Benz::A-Class Limousine': ['Progressive'],
+  'Mercedes-Benz::C-Class': ['Avantgarde', 'AMG Line'],
+  'Mercedes-Benz::E-Class': ['Avantgarde', 'AMG Line'],
+  'Mercedes-Benz::GLA': ['Progressive', 'AMG Line'],
+  'Mercedes-Benz::GLC': ['Avantgarde', 'AMG Line'],
+  'Mercedes-Benz::S-Class': ['AMG Line', 'Maybach'],
+
+  // BMW
+  'BMW::2 Series Gran Coupe': ['Sport Line', 'M Sport'],
+  'BMW::3 Series': ['Sport', 'Luxury Line', 'M Sport'],
+  'BMW::5 Series': ['Luxury Line', 'M Sport'],
+  'BMW::X1': ['sDrive', 'xDrive', 'M Sport'],
+  'BMW::X3': ['xLine', 'M Sport'],
+  'BMW::X5': ['xLine', 'M Sport'],
+
+  // Audi
+  'Audi::A4': ['Premium', 'Premium Plus', 'Technology'],
+  'Audi::A6': ['Premium Plus', 'Technology'],
+  'Audi::Q3': ['Premium', 'Premium Plus', 'Technology'],
+  'Audi::Q5': ['Premium Plus', 'Technology'],
+  'Audi::Q7': ['Premium Plus', 'Technology'],
+
+  // Volvo
+  'Volvo::XC40': ['Momentum', 'R-Design', 'Ultimate'],
+  'Volvo::XC60': ['Momentum', 'Inscription', 'R-Design'],
+  'Volvo::XC90': ['Momentum', 'Inscription', 'Excellence'],
+  'Volvo::S90': ['Momentum', 'Inscription'],
+
+  // Citroen
+  'Citroen::C3': ['Live', 'Feel', 'Shine'],
+  'Citroen::C3 Aircross': ['Live', 'Feel', 'Shine'],
+  'Citroen::eC3': ['Live', 'Feel'],
+  'Citroen::Basalt': ['Plus', 'Max'],
+
+  // BYD
+  'BYD::Atto3': ['Dynamic', 'Premium', 'Superior'],
+  'BYD::Seal': ['Premium', 'Performance'],
+  'BYD::e6': ['Superior'],
+
+  // Land Rover
+  'Land Rover::Range Rover Evoque': ['S', 'SE', 'HSE'],
+  'Land Rover::Range Rover Velar': ['S', 'SE', 'HSE'],
+  'Land Rover::Range Rover Sport': ['SE', 'HSE', 'Autobiography'],
+  'Land Rover::Defender': ['90', '110', '130'],
+
+  // MINI
+  'MINI::Cooper': ['Classic', 'Highgate'],
+  'MINI::Countryman': ['Classic', 'Highgate'],
+
+  // Chevrolet (exited India)
+  'Chevrolet::Beat': ['PS', 'LS', 'LT'],
+  'Chevrolet::Spark': ['PS', 'LS', 'LT'],
+  'Chevrolet::Cruze': ['LS', 'LT', 'LTZ'],
+  'Chevrolet::Tavera': ['LS', 'LT'],
+
+  // Datsun (discontinued)
+  'Datsun::GO': ['D', 'A', 'T'],
+  'Datsun::GO+': ['D', 'A', 'T'],
+  'Datsun::redi_GO': ['D', 'A', 'T'],
+
+  // Fiat (exited India)
+  'Fiat::Punto': ['Active', 'Dynamic', 'Emotion'],
+  'Fiat::Linea': ['Active', 'Dynamic', 'Emotion'],
+  'Fiat::Avventura': ['Active', 'Dynamic', 'Emotion'],
+
+  // Isuzu
+  'Isuzu::D-Max': ['S-Cab', 'Base', 'High'],
+  'Isuzu::MUX': ['4x2', '4x4'],
+  'Isuzu::V-Cross': ['Z', 'Z Prestige'],
 };
-const GENERIC_VARIANT_NAMES = ['Base', 'Mid', 'High', 'Top'];
+
+function getVariantNames(brand, model) {
+  return VARIANT_NAMES_BY_MODEL[`${brand}::${model}`] || ['Base', 'Mid', 'Top'];
+}
+
+function multiplierForIndex(i, total) {
+  if (total <= 1) return 1;
+  return VARIANT_SPREAD_MIN + ((VARIANT_SPREAD_MAX - VARIANT_SPREAD_MIN) * i) / (total - 1);
+}
 
 function listVariants(brand, model) {
   if (!BRAND_CATALOG[brand] || !BRAND_CATALOG[brand].models[model]) return [];
-  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+  const names = getVariantNames(brand, model);
   const basePrice = BRAND_CATALOG[brand].models[model];
   return names.map((name, i) => ({
     name,
-    price: Math.round((basePrice * VARIANT_MULTIPLIERS[i]) / 1000) * 1000,
+    price: Math.round((basePrice * multiplierForIndex(i, names.length)) / 1000) * 1000,
   }));
 }
 
-function getVariantMultiplier(brand, variant) {
-  const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
+function getVariantMultiplier(brand, model, variant) {
+  const names = getVariantNames(brand, model);
   const i = names.indexOf(variant);
-  return i >= 0 ? VARIANT_MULTIPLIERS[i] : 1;
+  return i >= 0 ? multiplierForIndex(i, names.length) : 1;
 }
 
 module.exports = {

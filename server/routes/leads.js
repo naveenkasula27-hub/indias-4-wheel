@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
 
   const override = await PriceOverride.findOne({ brand, model });
   let basePriceOverride = override ? override.basePrice : getBasePrice(brand, model);
-  if (variant) basePriceOverride = Math.round((basePriceOverride * getVariantMultiplier(brand, variant)) / 1000) * 1000;
+  if (variant) basePriceOverride = Math.round((basePriceOverride * getVariantMultiplier(brand, model, variant)) / 1000) * 1000;
   const valuationResult = estimateValuation({ brand, model, year, km, fuel, owners, city, basePriceOverride });
 
   let loanEligibility;
