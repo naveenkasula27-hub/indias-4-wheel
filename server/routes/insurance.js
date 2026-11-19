@@ -40,4 +40,9 @@ router.put('/:id', requireAuth, async (req, res) => {
   res.json(updated);
 });
 
+router.delete('/:id', requireAuth, async (req, res) => {
+  await InsuranceRequest.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
+});
+
 module.exports = router;

@@ -325,13 +325,14 @@ async function loadInsuranceRequests() {
         ${r.previousInsuranceCopy ? `<a href="${r.previousInsuranceCopy}" target="_blank" rel="noopener">Prev. Policy</a>` : '<span style="color:var(--slate-light);">No policy</span>'}
       </td>
       <td>${new Date(r.createdAt).toLocaleString('en-IN')}</td>
-      <td>
+      <td style="white-space:nowrap;">
         <select class="insurance-status">
           <option value="new" ${r.status==='new'?'selected':''}>New</option>
           <option value="contacted" ${r.status==='contacted'?'selected':''}>Contacted</option>
           <option value="quoted" ${r.status==='quoted'?'selected':''}>Quoted</option>
           <option value="closed" ${r.status==='closed'?'selected':''}>Closed</option>
         </select>
+        <button class="btn-sm btn-del" data-action="delete-insurance">Delete</button>
       </td>
     </tr>
   `).join('') || '<tr><td colspan="7" style="color:var(--slate-light);">No insurance requests yet.</td></tr>';
@@ -340,6 +341,14 @@ async function loadInsuranceRequests() {
     sel.addEventListener('change', async (e) => {
       const row = e.target.closest('tr');
       await api(`/insurance/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
+    });
+  });
+  tbody.querySelectorAll('button[data-action="delete-insurance"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      if (!confirm('Delete this insurance request permanently?')) return;
+      await api(`/insurance/${row.dataset.id}`, { method: 'DELETE' });
+      loadInsuranceRequests();
     });
   });
 }
