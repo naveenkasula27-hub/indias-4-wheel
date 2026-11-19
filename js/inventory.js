@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     <a class="car-card" href="car-detail.html?id=${c.id}">
       <div class="car-media">
         <button class="save-car-btn" data-car-id="${c.id}" aria-label="Save car">♡</button>
-        <span class="car-badge">${c.badge}</span>
+        <span class="car-badge">${c.verified ? '✓ Verified' : c.badge}</span>
         <span class="car-fuel">${c.fuel}</span>
         <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
       </div>
       <div class="car-body">
         <h4>${c.name}</h4>
-        <p class="car-meta">${c.year} · ${formatKm(c.km)} · ${c.fuel} · ${c.city}</p>
+        <p class="car-meta">${c.year} · ${formatKm(c.km)} · ${c.fuel} · ${c.owners === 1 ? '1st Owner' : c.owners + ' Owners'} · ${c.city}</p>
         <div class="car-price-row">
           <span class="car-price">${formatPrice(c.price)}</span>
           <span class="car-emi">${formatEmi(c.emi)}</span>

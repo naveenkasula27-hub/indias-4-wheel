@@ -17,7 +17,12 @@ const carSchema = new mongoose.Schema(
     badge: { type: String, default: '' },
     aged: { type: Boolean, default: false },
     photo: { type: String, default: '' },
+    photos: { type: [String], default: [] },
     interior: { type: String, default: '' },
+    features: { type: [String], default: [] },
+    description: { type: String, default: '' },
+    verified: { type: Boolean, default: false },
+    featured: { type: Boolean, default: false },
     status: { type: String, enum: ['available', 'sold', 'hidden'], default: 'available' },
   },
   { timestamps: true }

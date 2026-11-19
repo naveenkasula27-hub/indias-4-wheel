@@ -113,7 +113,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const modelOtherInput = document.getElementById('fModelOther');
   brandSelect.addEventListener('change', async () => {
     const brand = brandSelect.value;
-    let models = FALLBACK_CATALOG[brand]?.models || [];
+    const requestedBrand = brand;
+    let models = Object.keys(FALLBACK_CATALOG[brand]?.models || {});
+    modelSelect.innerHTML = '<option value="">Loading models...</option>';
     try {
       if (!apiBase) throw new Error('no api');
       const res = await fetch(`${apiBase}/valuation/catalog/models/${encodeURIComponent(brand)}`);
@@ -121,6 +123,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const apiModels = await res.json();
       if (Array.isArray(apiModels) && apiModels.length) models = apiModels;
     } catch { /* use local fallback list */ }
+    // If the brand changed again while this fetch was in flight, a newer
+    // call already owns the dropdown — don't overwrite it with stale data.
+    if (brandSelect.value !== requestedBrand) return;
     modelSelect.innerHTML = '<option value="">Select model</option>' +
       models.map(m => `<option>${m}</option>`).join('') +
       '<option value="__other__">Other / not listed</option>';
@@ -170,7 +175,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const currentN = +current.dataset.step;
       if (!validateStep(currentN)) return;
 
-      if (currentN === 3) await buildQuote();
+      if (currentN === 2) await buildQuote();
       goToStep(+btn.dataset.next);
     });
   });
@@ -211,40 +216,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('quoteCarName').textContent = `${brand} ${model} · ${year} · ${km.toLocaleString('en-IN')} km`;
     document.getElementById('quoteCityName').textContent = city || 'your city';
     window.__i4w_valuation = result.estimate;
+  }
 
-    // Loan eligibility (optional step 3 inputs)
+  // Optional loan eligibility check — collapsible on the quote screen, not a forced step
+  document.getElementById('toggleLoanCheck')?.addEventListener('click', () => {
+    const panel = document.getElementById('loanCheckPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  });
+
+  document.getElementById('checkLoanBtn')?.addEventListener('click', async () => {
     const income = +document.getElementById('lIncome').value;
     const loanBox = document.getElementById('loanEligBox');
-    if (income > 0) {
-      const payload = {
-        carPrice: result.estimate,
-        monthlyIncome: income,
-        existingEmis: +document.getElementById('lExistingEmi').value || 0,
-        employmentType: document.getElementById('lEmployment').value,
-        creditScoreBand: document.getElementById('lCreditBand').value,
-      };
-      let loan;
-      try {
-        if (!apiBase) throw new Error('no api');
-        const res = await fetch(`${apiBase}/loan/eligibility`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        if (!res.ok) throw new Error('api failed');
-        loan = await res.json();
-      } catch {
-        loan = fallbackLoanEligibility(payload);
-      }
-      loanBox.style.display = 'block';
-      document.getElementById('loanEligText').innerHTML =
-        `You're eligible for up to <strong>₹ ${loan.eligibleAmount.toLocaleString('en-IN')}</strong> at ` +
-        `<strong>${loan.interestRate}%</strong> interest — EMI from <strong>₹ ${loan.emi.toLocaleString('en-IN')}/mo</strong> over ${loan.tenureMonths} months.`;
-      window.__i4w_loanIncome = income;
-    } else {
-      loanBox.style.display = 'none';
+    if (!income) { alert('Enter your monthly income first.'); return; }
+
+    const payload = {
+      carPrice: window.__i4w_valuation || 0,
+      monthlyIncome: income,
+      existingEmis: +document.getElementById('lExistingEmi').value || 0,
+      employmentType: document.getElementById('lEmployment').value,
+      creditScoreBand: document.getElementById('lCreditBand').value,
+    };
+    let loan;
+    try {
+      if (!apiBase) throw new Error('no api');
+      const res = await fetch(`${apiBase}/loan/eligibility`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('api failed');
+      loan = await res.json();
+    } catch {
+      loan = fallbackLoanEligibility(payload);
     }
-  }
+    loanBox.style.display = 'block';
+    document.getElementById('loanEligText').innerHTML =
+      `You're eligible for up to <strong>₹ ${loan.eligibleAmount.toLocaleString('en-IN')}</strong> at ` +
+      `<strong>${loan.interestRate}%</strong> interest — EMI from <strong>₹ ${loan.emi.toLocaleString('en-IN')}/mo</strong> over ${loan.tenureMonths} months.`;
+    window.__i4w_loanIncome = income;
+  });
 
   document.getElementById('sellForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -280,7 +290,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('confirmMsg').textContent =
       `Thanks ${name}! We'll call you within 30 minutes to schedule a free inspection at your location.`;
-    goToStep(5);
+    goToStep(4);
   });
 
   /* ---------- Mobile nav toggle ---------- */

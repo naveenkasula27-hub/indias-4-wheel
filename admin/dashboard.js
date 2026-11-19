@@ -21,6 +21,15 @@ async function api(path, opts = {}) {
 
 // --- Tabs ---
 const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', recalibration: 'Recalibration Report', account: 'Account' };
+const TAB_SUBS = {
+  inventory: 'Live overview of your listings, leads and pricing',
+  leads: 'New sell-car submissions arrive here automatically — no refresh needed',
+  testdrives: 'Test drive requests from buyers browsing your inventory',
+  messages: 'Messages submitted through the Contact Us page',
+  pricing: 'Override any model\'s starting valuation price instantly',
+  recalibration: 'Built from real sold prices you\'ve logged against each lead',
+  account: 'Manage your admin login',
+};
 document.querySelectorAll('.nav-link').forEach((link) => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
@@ -31,10 +40,12 @@ document.querySelectorAll('.nav-link').forEach((link) => {
       document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     });
     document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
+    document.getElementById('pageSub').innerHTML = `<span class="live-dot"></span>${TAB_SUBS[tab] || ''}`;
     if (tab === 'pricing') loadPricing();
     if (tab === 'testdrives') loadTestDrives();
     if (tab === 'messages') loadMessages();
     if (tab === 'recalibration') loadRecalibration();
+    if (tab === 'leads') loadLeads();
   });
 });
 
@@ -96,6 +107,41 @@ function renderCars(cars) {
   });
 }
 
+// --- Add-car chip inputs (feature tags + extra photos) ---
+let newCarPhotos = [];
+let newCarFeatures = [];
+
+function renderChips(containerId, items, onRemove) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = items.map((item, i) => `
+    <span class="chip-tag" data-i="${i}" style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-soft,#f1f4f9);border-radius:16px;padding:4px 10px;font-size:12px;">
+      ${item} <button type="button" data-i="${i}" style="border:none;background:none;cursor:pointer;color:#c0392b;font-weight:700;">&times;</button>
+    </span>
+  `).join('');
+  container.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', () => onRemove(+btn.dataset.i));
+  });
+}
+
+function removePhotoChip(i) { newCarPhotos.splice(i, 1); renderChips('photoChips', newCarPhotos, removePhotoChip); }
+function removeFeatureChip(i) { newCarFeatures.splice(i, 1); renderChips('featureChips', newCarFeatures, removeFeatureChip); }
+
+document.getElementById('addPhotoBtn').addEventListener('click', () => {
+  const input = document.getElementById('newPhotoExtra');
+  if (!input.value.trim()) return;
+  newCarPhotos.push(input.value.trim());
+  input.value = '';
+  renderChips('photoChips', newCarPhotos, removePhotoChip);
+});
+
+document.getElementById('addFeatureBtn').addEventListener('click', () => {
+  const input = document.getElementById('newFeatureTag');
+  if (!input.value.trim()) return;
+  newCarFeatures.push(input.value.trim());
+  input.value = '';
+  renderChips('featureChips', newCarFeatures, removeFeatureChip);
+});
+
 document.getElementById('addCarBtn').addEventListener('click', async () => {
   const body = {
     name: document.getElementById('newName').value,
@@ -106,21 +152,37 @@ document.getElementById('addCarBtn').addEventListener('click', async () => {
     transmission: document.getElementById('newTransmission').value,
     year: +document.getElementById('newYear').value,
     km: +document.getElementById('newKm').value,
+    owners: +document.getElementById('newOwners').value || 1,
     city: document.getElementById('newCity').value,
     price: +document.getElementById('newPrice').value,
     emi: +document.getElementById('newEmi').value,
     photo: document.getElementById('newPhoto').value,
+    photos: newCarPhotos,
+    features: newCarFeatures,
+    verified: document.getElementById('newVerified').checked,
+    featured: document.getElementById('newFeatured').checked,
+    description: document.getElementById('newDescription').value,
   };
   if (!body.name || !body.brand || !body.model || !body.year || !body.price) {
     alert('Please fill name, brand, model, year and price.');
     return;
   }
   await api('/cars', { method: 'POST', body: JSON.stringify(body) });
-  ['newName','newBrand','newModel','newYear','newKm','newCity','newPrice','newEmi','newPhoto'].forEach((id) => document.getElementById(id).value = '');
+  ['newName','newBrand','newModel','newYear','newKm','newOwners','newCity','newPrice','newEmi','newPhoto','newPhotoExtra','newFeatureTag','newDescription'].forEach((id) => document.getElementById(id).value = '');
+  document.getElementById('newVerified').checked = false;
+  document.getElementById('newFeatured').checked = false;
+  newCarPhotos = []; newCarFeatures = [];
+  renderChips('photoChips', newCarPhotos, removePhotoChip);
+  renderChips('featureChips', newCarFeatures, removeFeatureChip);
   loadCars();
 });
 
 // --- Leads ---
+// Tracks lead IDs already shown this session so genuinely new ones (arrived
+// since the last poll) can be flashed in instead of silently appearing.
+const seenLeadIds = new Set();
+let leadsFirstLoad = true;
+
 async function loadLeads() {
   const leads = await api('/leads').catch(() => []);
   document.getElementById('statLeads').textContent = leads.length;
@@ -128,7 +190,7 @@ async function loadLeads() {
 
   const tbody = document.getElementById('leadsTableBody');
   tbody.innerHTML = leads.map((l) => `
-    <tr data-id="${l._id}">
+    <tr data-id="${l._id}" class="${!leadsFirstLoad && !seenLeadIds.has(l._id) ? 'lead-row-new' : ''}">
       <td>${l.name}<br><span style="color:var(--slate-light);font-size:12px;">${l.phone}</span></td>
       <td>${l.brand} ${l.model} · ${l.year} · ${l.km.toLocaleString('en-IN')} km</td>
       <td>₹ ${l.valuation.toLocaleString('en-IN')}</td>
@@ -153,6 +215,9 @@ async function loadLeads() {
       </td>
     </tr>
   `).join('') || '<tr><td colspan="7" style="color:var(--slate-light);">No leads yet.</td></tr>';
+
+  leads.forEach((l) => seenLeadIds.add(l._id));
+  leadsFirstLoad = false;
 
   tbody.querySelectorAll('.lead-status').forEach((sel) => {
     sel.addEventListener('change', async (e) => {
@@ -343,3 +408,11 @@ document.getElementById('changePwBtn')?.addEventListener('click', async () => {
 
 loadCars();
 loadLeads();
+
+// Poll for new leads every 20s while that tab is open, so a fresh "sell my
+// car" submission visibly flashes in without the owner needing to refresh.
+setInterval(() => {
+  const leadsTab = document.getElementById('tab-leads');
+  const isTyping = leadsTab?.contains(document.activeElement) && document.activeElement !== document.body;
+  if (leadsTab && leadsTab.style.display !== 'none' && !isTyping) loadLeads();
+}, 20000);

@@ -13,14 +13,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     `${car.year} · ${formatKm(car.km)} · ${car.fuel} · ${car.transmission} · ${car.owners === 1 ? '1st Owner' : car.owners + ' Owners'} · ${car.city}`;
   document.getElementById('detailPrice').textContent = formatPrice(car.price);
   document.getElementById('detailEmi').textContent = formatEmi(car.emi);
-  document.getElementById('detailBadge').textContent = car.badge;
+  document.getElementById('detailBadge').textContent = car.verified ? '✓ Verified / Assured' : car.badge;
 
   const mainPhoto = document.getElementById('mainPhoto');
   mainPhoto.src = car.photo;
   mainPhoto.alt = car.name;
   mainPhoto.className = car.aged ? 'img-aged' : '';
 
-  const photos = [car.photo, car.interior, car.photo, car.interior];
+  const photos = (Array.isArray(car.photos) && car.photos.length)
+    ? [car.photo, ...car.photos]
+    : [car.photo, car.interior, car.photo, car.interior];
   document.getElementById('thumbRow').innerHTML = photos.map((p, i) => `
     <div class="thumb ${i === 0 ? 'active' : ''}" data-src="${p}">
       <img src="${p}" alt="View ${i + 1}">
@@ -43,11 +45,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     <div class="spec-item"><span>${k}</span><strong>${v}</strong></div>
   `).join('');
 
-  // EMI calculator — down payment %, interest rate, and tenure are all adjustable
+  if (car.description) {
+    document.getElementById('descriptionBlock').style.display = 'block';
+    document.getElementById('detailDescription').textContent = car.description;
+  }
+  if (Array.isArray(car.features) && car.features.length) {
+    document.getElementById('featuresBlock').style.display = 'block';
+    document.getElementById('featuresGrid').innerHTML = car.features.map((f) => `
+      <span style="background:#F4F6FA;border-radius:20px;padding:6px 14px;font-size:13px;color:var(--navy);font-weight:600;">✔ ${f}</span>
+    `).join('');
+  }
+
+  // EMI calculator — down payment, interest rate, and tenure can be dragged
+  // or typed exactly; typing always wins over the slider's coarse steps.
   document.getElementById('emiPrice').textContent = formatPrice(car.price);
   const downSlider = document.getElementById('emiDownSlider');
   const rateSlider = document.getElementById('emiRateSlider');
   const tenureSlider = document.getElementById('emiTenureSlider');
+  const downInput = document.getElementById('emiDownInput');
+  const rateInput = document.getElementById('emiRateInput');
+  const tenureInput = document.getElementById('emiTenureInput');
+  downInput.value = Math.round(car.price * (+downSlider.value / 100));
 
   function computeEmi(principal, annualRatePct, tenureMonths) {
     const r = annualRatePct / 12 / 100;
@@ -57,11 +75,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateEmi() {
-    const downPct = +downSlider.value;
+    const downAmount = Math.min(+downInput.value || 0, car.price);
     const rate = +rateSlider.value;
     const tenure = +tenureSlider.value;
-    const downAmount = Math.round(car.price * (downPct / 100));
-    const loanAmount = car.price - downAmount;
+    const downPct = car.price > 0 ? Math.round((downAmount / car.price) * 100) : 0;
+    const loanAmount = Math.max(0, car.price - downAmount);
     const emi = computeEmi(loanAmount, rate, tenure);
 
     document.getElementById('emiDownLabel').textContent = `${downPct}% · ${formatPrice(downAmount)}`;
@@ -69,7 +87,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('emiTenureLabel').textContent = `${tenure} months`;
     document.getElementById('emiMonthly').textContent = `₹${emi.toLocaleString('en-IN')}`;
   }
-  [downSlider, rateSlider, tenureSlider].forEach(el => el?.addEventListener('input', updateEmi));
+
+  downSlider?.addEventListener('input', () => { downInput.value = Math.round(car.price * (+downSlider.value / 100)); updateEmi(); });
+  rateSlider?.addEventListener('input', () => { rateInput.value = rateSlider.value; updateEmi(); });
+  tenureSlider?.addEventListener('input', () => { tenureInput.value = tenureSlider.value; updateEmi(); });
+
+  downInput?.addEventListener('input', () => {
+    const pct = car.price > 0 ? Math.min(80, Math.max(0, Math.round(((+downInput.value || 0) / car.price) * 100))) : 0;
+    downSlider.value = pct;
+    updateEmi();
+  });
+  rateInput?.addEventListener('input', () => {
+    const v = +rateInput.value || 0;
+    rateSlider.value = Math.min(+rateSlider.max, Math.max(+rateSlider.min, v));
+    updateEmi();
+  });
+  tenureInput?.addEventListener('input', () => {
+    const v = +tenureInput.value || 0;
+    tenureSlider.value = Math.min(+tenureSlider.max, Math.max(+tenureSlider.min, v));
+    updateEmi();
+  });
+
   updateEmi();
 
   // Similar cars: same body type, excluding current
@@ -77,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('similarGrid').innerHTML = similar.map(c => `
     <a class="car-card" href="car-detail.html?id=${c.id}">
       <div class="car-media">
-        <span class="car-badge">${c.badge}</span>
+        <span class="car-badge">${c.verified ? '✓ Verified' : c.badge}</span>
         <span class="car-fuel">${c.fuel}</span>
         <img src="${c.photo}" alt="${c.name}" loading="lazy" class="${c.aged ? 'img-aged' : ''}">
       </div>

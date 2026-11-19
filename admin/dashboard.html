@@ -12,7 +12,8 @@
 <body>
   <div class="admin-shell">
     <aside class="admin-sidebar">
-      <div class="brand">India's 4Wheel · Owner</div>
+      <div class="brand"><span class="brand-mark">🚗</span> India's4Wheel</div>
+      <p class="brand-sub">Owner Dashboard</p>
       <nav>
         <a href="#inventory" class="nav-link active" data-tab="inventory">Manage Inventory</a>
         <a href="#leads" class="nav-link" data-tab="leads">Sell-Car Leads</a>
@@ -27,7 +28,10 @@
 
     <main class="admin-main">
       <div class="admin-topbar">
-        <h1 id="pageTitle">Manage Inventory</h1>
+        <div>
+          <h1 id="pageTitle">Manage Inventory</h1>
+          <p class="page-sub" id="pageSub"><span class="live-dot"></span>Live overview of your listings, leads and pricing</p>
+        </div>
         <span id="adminName" style="color:var(--slate-light);font-size:14px;"></span>
       </div>
 
@@ -53,12 +57,38 @@
             <select id="newTransmission"><option>Manual</option><option>Automatic</option></select>
             <input id="newYear" type="number" placeholder="Year">
             <input id="newKm" type="number" placeholder="KM driven">
-            <input id="newCity" placeholder="City">
+            <input id="newOwners" type="number" min="1" placeholder="Owners count" value="1">
+            <input id="newCity" placeholder="City / Locality">
             <input id="newPrice" type="number" placeholder="Price (₹)">
             <input id="newEmi" type="number" placeholder="EMI/mo (₹)">
-            <input id="newPhoto" placeholder="Photo URL (optional)">
+            <input id="newPhoto" placeholder="Cover photo URL">
           </div>
-          <button class="btn-admin-primary" id="addCarBtn" style="width:auto;padding:10px 22px;">+ Add Car</button>
+
+          <div class="add-car-form" style="margin-top:14px;">
+            <div style="grid-column:1/-1;">
+              <label style="font-size:12px;font-weight:600;color:var(--slate-light);display:block;margin-bottom:6px;">Additional Photos</label>
+              <div style="display:flex;gap:8px;">
+                <input id="newPhotoExtra" placeholder="Paste another photo URL..." style="flex:1;">
+                <button type="button" class="btn-sm btn-save" id="addPhotoBtn">+ Add Photo</button>
+              </div>
+              <div id="photoChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label style="font-size:12px;font-weight:600;color:var(--slate-light);display:block;margin-bottom:6px;">Feature Tags</label>
+              <div style="display:flex;gap:8px;">
+                <input id="newFeatureTag" placeholder="e.g. Sunroof, ABS, Airbags" style="flex:1;">
+                <button type="button" class="btn-sm btn-save" id="addFeatureBtn">+ Add Tag</button>
+              </div>
+              <div id="featureChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input type="checkbox" id="newVerified"> Verified / Assured</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;"><input type="checkbox" id="newFeatured"> Mark as Featured</label>
+            <div style="grid-column:1/-1;">
+              <label style="font-size:12px;font-weight:600;color:var(--slate-light);display:block;margin-bottom:6px;">Description</label>
+              <textarea id="newDescription" rows="3" placeholder="Short description for the car's detail page..." style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;"></textarea>
+            </div>
+          </div>
+          <button class="btn-admin-primary" id="addCarBtn" style="width:auto;padding:10px 22px;margin-top:14px;">+ Add Car</button>
         </div>
 
         <div class="admin-card">
