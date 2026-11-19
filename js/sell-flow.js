@@ -44,13 +44,22 @@ const GENERIC_VARIANT_NAMES = ['Base', 'Mid', 'High', 'Top'];
 // Display-only on-road premium (road tax + insurance + registration,
 // blended into one figure) — never applied to the actual valuation math,
 // only to what's shown next to each variant so it reads as a real
-// purchase price. See brandCatalog.js's ON_ROAD_MULTIPLIER for why.
-const ON_ROAD_MULTIPLIER = 1.12;
+// purchase price. Tiered by price since road tax is progressive in most
+// states (checked real listings: ~12.6% for a Swift, ~19.5% for a
+// Fortuner) — see brandCatalog.js's onRoadMultiplier for the real data.
+function onRoadMultiplier(exShowroomPrice) {
+  if (exShowroomPrice < 1000000) return 1.12;
+  if (exShowroomPrice < 2500000) return 1.15;
+  return 1.19;
+}
 
 function fallbackListVariants(brand, model) {
   const basePrice = fallbackBasePrice(brand, model);
   const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
-  return names.map((name, i) => ({ name, price: Math.round(basePrice * VARIANT_MULTIPLIERS[i] * ON_ROAD_MULTIPLIER / 1000) * 1000 }));
+  return names.map((name, i) => {
+    const exShowroom = basePrice * VARIANT_MULTIPLIERS[i];
+    return { name, price: Math.round(exShowroom * onRoadMultiplier(exShowroom) / 1000) * 1000 };
+  });
 }
 
 function fallbackVariantMultiplier(brand, variant) {
