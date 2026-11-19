@@ -81,7 +81,7 @@ select.city-select{border:none;cursor:pointer;font-family:inherit;font-size:14px
 .brand-text{font-family:var(--ff-display);font-weight:600;font-size:19px;color:var(--navy);}
 .brand-text strong{color:var(--orange);}
 .brand-text.light{color:#fff;}
-.main-nav{display:flex;gap:28px;font-weight:600;font-size:14.5px;color:var(--navy);flex:1;justify-content:center;}
+.main-nav{display:flex;gap:18px;font-weight:600;font-size:13.5px;color:var(--navy);flex:1;justify-content:center;white-space:nowrap;}
 .main-nav a{opacity:.85;transition:opacity .15s, color .15s;}
 .main-nav a:hover{opacity:1;color:var(--orange);}
 .header-actions{display:flex;align-items:center;gap:10px;}
@@ -160,6 +160,19 @@ select.city-select{border:none;cursor:pointer;font-family:inherit;font-size:14px
 .whyus-ico{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--navy));color:#fff;font-size:19px;font-weight:700;margin-bottom:14px;}
 .whyus-card h4{font-family:var(--ff-display);font-size:16px;color:var(--navy);margin:0 0 8px;}
 .whyus-card p{margin:0;font-size:13.5px;color:var(--slate-light);line-height:1.55;}
+
+.floating-contact{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:12px;z-index:999;}
+.floating-contact-btn{
+  width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,0.22);transition:transform 0.18s,box-shadow 0.18s;
+}
+.floating-contact-btn:hover{transform:translateY(-3px) scale(1.05);box-shadow:0 10px 24px rgba(0,0,0,0.28);}
+.floating-whatsapp{background:#25D366;}
+.floating-call{background:var(--navy);}
+@media (max-width:640px){
+  .floating-contact{right:14px;bottom:14px;gap:10px;}
+  .floating-contact-btn{width:48px;height:48px;}
+}
 
 /* ---------- Sections ---------- */
 .section{padding:84px 0;}

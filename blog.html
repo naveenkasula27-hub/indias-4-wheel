@@ -43,11 +43,13 @@
       <span class="brand-text">India's<strong>4Wheel</strong></span>
     </a>
     <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
       <a href="inventory.html">Buy Car</a>
       <a href="sell.html">Sell Car</a>
-      <a href="sell.html">Car Valuation</a>
+      <a href="about.html">About</a>
+      <a href="index.html#emi-calculator">EMI Calculator</a>
+      <a href="insurance.html">Insurance</a>
       <a href="loan.html">Financing</a>
-      <a href="index.html#faq">FAQ</a>
     </nav>
     <div class="header-actions">
       <select class="btn btn-ghost city-select" id="cityBtn">
@@ -62,8 +64,45 @@
 <main>
   <div class="legal-wrap">
     <h1>Blog</h1>
-    <p class="legal-updated">We're working on our first set of articles — check back soon for guides on buying, selling, and financing a used car in India.</p>
-    <p>In the meantime, our <a href="index.html#faq">FAQ section</a> covers the most common questions about test drives, our money-back guarantee, and financing.</p>
+    <p class="legal-updated">Guides on buying, selling, insuring and financing a used car in India.</p>
+
+    <article style="margin-bottom:40px;">
+      <p style="color:var(--slate-light);font-size:13px;margin:0 0 6px;">16 November 2026</p>
+      <h2>7 Things to Check Before Buying a Used Car in India</h2>
+      <p>A used car can be a great deal or a costly mistake — the difference usually comes down to what you check before paying. Here's what actually matters:</p>
+      <ol>
+        <li><strong>Service history</strong> — a full, continuous service record tells you more than the odometer does. Gaps are a red flag.</li>
+        <li><strong>Accident history</strong> — ask for an inspection report, not just a visual check. Repainted panels and uneven gaps are easy to miss on your own.</li>
+        <li><strong>Odometer consistency</strong> — cross-check the reading against service stickers and past invoices. A tampered odometer is one of the most common used-car scams.</li>
+        <li><strong>RC and ownership papers</strong> — confirm the registration certificate matches the seller's ID, and check for any pending loan hypothecation on the RC.</li>
+        <li><strong>RTO and challan status</strong> — outstanding traffic challans or disputes transfer to you as the new owner if not cleared first.</li>
+        <li><strong>Insurance continuity</strong> — a lapsed policy usually means a higher premium and a fresh inspection requirement when you renew it.</li>
+        <li><strong>A real test drive</strong> — on a mix of city and highway roads, not just around the block. Listen for engine noise, check AC cooling, and test the brakes properly.</li>
+      </ol>
+      <p>Every car listed on India's 4 Wheel already clears a 200-point inspection covering all of this before it goes live — so you're starting from a verified baseline, not guesswork.</p>
+    </article>
+
+    <article style="margin-bottom:40px;">
+      <p style="color:var(--slate-light);font-size:13px;margin:0 0 6px;">16 November 2026</p>
+      <h2>How We Actually Calculate Your Car's Resale Value</h2>
+      <p>Most instant valuation tools quietly either lowball sellers or overpromise and disappoint them at inspection. Here's how ours is actually built:</p>
+      <p>We start from a real ex-showroom reference price for your exact brand, model and variant — not a generic brand average. From there, a depreciation curve calibrated against real market listings (not a flat percentage) accounts for age, and that curve is different for hatchbacks, mid-size sedans/SUVs, and luxury cars, because they genuinely depreciate at different rates in the Indian market.</p>
+      <p>On top of that, your car's actual kilometres driven, number of owners, fuel type and city all adjust the number — a low-mileage, single-owner car is worth more than an identical one with heavy use and multiple owners, and our formula reflects that instead of treating every car of the same model as identical.</p>
+      <p>The estimate is a starting point, confirmed after a free physical inspection — but it's built to be close from the first number you see, not a teaser that falls apart in person.</p>
+    </article>
+
+    <article>
+      <p style="color:var(--slate-light);font-size:13px;margin:0 0 6px;">16 November 2026</p>
+      <h2>Car Insurance Renewal: What Most Owners Get Wrong</h2>
+      <p>A surprising number of insurance claims get delayed or rejected for reasons that have nothing to do with the accident itself. The most common ones:</p>
+      <ul>
+        <li><strong>Letting the policy lapse</strong> — even a short gap can mean a mandatory fresh inspection and a higher premium on renewal, sometimes with exclusions for pre-existing wear.</li>
+        <li><strong>Under-declaring modifications</strong> — any change from the manufacturer's spec (alloy wheels, CNG kits, etc.) needs to be declared, or a related claim can be denied.</li>
+        <li><strong>Ignoring the IDV (Insured Declared Value)</strong> — accepting whatever IDV the insurer defaults to, instead of negotiating it, directly shrinks your payout in a total-loss claim.</li>
+        <li><strong>No-claim bonus left unclaimed</strong> — this follows you, not the car. If you switch insurers or cars, make sure it's carried over — it's often worth a meaningful discount.</li>
+      </ul>
+      <p>If you're insuring a used car bought outside our platform, our <a href="insurance.html">insurance request form</a> runs the same documentation and RTO checks we use internally, so you get a quote based on the car's real condition rather than a guess.</p>
+    </article>
   </div>
 </main>
 
@@ -95,6 +134,7 @@
 </footer>
 
 <script src="admin/config.js"></script>
+<script src="js/floating-contact.js"></script>
 <script src="js/account-session.js"></script>
 <script>
 document.getElementById('navToggle')?.addEventListener('click', () => {

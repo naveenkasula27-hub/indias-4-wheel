@@ -11,10 +11,14 @@ const leadRoutes = require('./routes/leads');
 const customerRoutes = require('./routes/customer');
 const testDriveRoutes = require('./routes/testdrive');
 const contactRoutes = require('./routes/contact');
+const insuranceRoutes = require('./routes/insurance');
 
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
-app.use(express.json());
+// Raised from the default 100kb so the Insurance request route can accept
+// two document photos as base64 (client caps each file at 2MB, which is
+// roughly 2.7MB once base64-encoded).
+app.use(express.json({ limit: '10mb' }));
 
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
@@ -37,6 +41,7 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/customer', customerRoutes);
 app.use('/api/test-drives', testDriveRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/insurance', insuranceRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err);

@@ -65,6 +65,62 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // --- Mobile OTP login ---
+  document.getElementById('sendOtpBtn').addEventListener('click', async () => {
+    const errorEl = document.getElementById('otpErrorC');
+    const devNotice = document.getElementById('otpDevNotice');
+    errorEl.style.display = 'none';
+    const phone = document.getElementById('otpPhone').value;
+    if (!/^[0-9]{10}$/.test(phone)) {
+      errorEl.textContent = 'Enter a valid 10-digit mobile number';
+      errorEl.style.display = 'block';
+      return;
+    }
+    try {
+      if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
+      const res = await fetch(`${apiBase}/customer/otp/request`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not send OTP');
+      document.getElementById('otpCodeField').style.display = 'block';
+      if (data.devOtp) {
+        devNotice.style.display = 'block';
+        devNotice.textContent = `Demo mode (no SMS provider connected yet): your OTP is ${data.devOtp}`;
+      } else {
+        devNotice.style.display = 'none';
+      }
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+    }
+  });
+
+  document.getElementById('resendOtpBtn').addEventListener('click', () => {
+    document.getElementById('sendOtpBtn').click();
+  });
+
+  document.getElementById('otpFormC').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById('otpErrorC');
+    errorEl.style.display = 'none';
+    try {
+      if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
+      const res = await fetch(`${apiBase}/customer/otp/verify`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: document.getElementById('otpPhone').value, code: document.getElementById('otpCode').value }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Verification failed');
+      saveSession(data.token, data.customer);
+      window.location.reload();
+    } catch (err) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+    }
+  });
+
   // --- Logged-in view ---
   if (token) {
     loadProfile();

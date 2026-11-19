@@ -20,12 +20,13 @@ async function api(path, opts = {}) {
 }
 
 // --- Tabs ---
-const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', variants: 'Variant Pricing', recalibration: 'Recalibration Report', account: 'Account' };
+const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', insurance: 'Insurance Requests', pricing: 'Valuation Pricing', variants: 'Variant Pricing', recalibration: 'Recalibration Report', account: 'Account' };
 const TAB_SUBS = {
   inventory: 'Live overview of your listings, leads and pricing',
   leads: 'New sell-car submissions arrive here automatically — no refresh needed',
   testdrives: 'Test drive requests from buyers browsing your inventory',
   messages: 'Messages submitted through the Contact Us page',
+  insurance: 'Insurance quote requests submitted through the Insurance page',
   pricing: 'Override any model\'s starting valuation price instantly',
   variants: 'Correct any specific variant\'s on-road price shown to customers',
   recalibration: 'Built from real sold prices you\'ve logged against each lead',
@@ -37,7 +38,7 @@ document.querySelectorAll('.nav-link').forEach((link) => {
     document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
     link.classList.add('active');
     const tab = link.dataset.tab;
-    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'variants', 'recalibration', 'account'].forEach((t) => {
+    ['inventory', 'leads', 'testdrives', 'messages', 'insurance', 'pricing', 'variants', 'recalibration', 'account'].forEach((t) => {
       document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     });
     document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
@@ -46,6 +47,7 @@ document.querySelectorAll('.nav-link').forEach((link) => {
     if (tab === 'variants') loadVariantPricing();
     if (tab === 'testdrives') loadTestDrives();
     if (tab === 'messages') loadMessages();
+    if (tab === 'insurance') loadInsuranceRequests();
     if (tab === 'recalibration') loadRecalibration();
     if (tab === 'leads') loadLeads();
   });
@@ -303,6 +305,41 @@ async function loadMessages() {
     sel.addEventListener('change', async (e) => {
       const row = e.target.closest('tr');
       await api(`/contact/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
+    });
+  });
+}
+
+// --- Insurance Requests ---
+async function loadInsuranceRequests() {
+  const rows = await api('/insurance').catch(() => []);
+  const tbody = document.getElementById('insuranceTableBody');
+  tbody.innerHTML = rows.map((r) => `
+    <tr data-id="${r._id}">
+      <td>${r.requestCode}</td>
+      <td>${r.name}</td>
+      <td>${r.email}<br><span style="color:var(--slate-light);font-size:12px;">${r.phone}</span></td>
+      <td>${r.registrationNumber}</td>
+      <td style="white-space:nowrap;">
+        ${r.rcCopy ? `<a href="${r.rcCopy}" target="_blank" rel="noopener">RC</a>` : '<span style="color:var(--slate-light);">No RC</span>'}
+        &nbsp;·&nbsp;
+        ${r.previousInsuranceCopy ? `<a href="${r.previousInsuranceCopy}" target="_blank" rel="noopener">Prev. Policy</a>` : '<span style="color:var(--slate-light);">No policy</span>'}
+      </td>
+      <td>${new Date(r.createdAt).toLocaleString('en-IN')}</td>
+      <td>
+        <select class="insurance-status">
+          <option value="new" ${r.status==='new'?'selected':''}>New</option>
+          <option value="contacted" ${r.status==='contacted'?'selected':''}>Contacted</option>
+          <option value="quoted" ${r.status==='quoted'?'selected':''}>Quoted</option>
+          <option value="closed" ${r.status==='closed'?'selected':''}>Closed</option>
+        </select>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="7" style="color:var(--slate-light);">No insurance requests yet.</td></tr>';
+
+  tbody.querySelectorAll('.insurance-status').forEach((sel) => {
+    sel.addEventListener('change', async (e) => {
+      const row = e.target.closest('tr');
+      await api(`/insurance/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
     });
   });
 }

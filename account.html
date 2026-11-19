@@ -46,11 +46,13 @@
       <span class="brand-text">India's<strong>4Wheel</strong></span>
     </a>
     <nav class="main-nav" id="mainNav">
+      <a href="index.html">Home</a>
       <a href="inventory.html">Buy Car</a>
       <a href="sell.html">Sell Car</a>
-      <a href="sell.html">Car Valuation</a>
+      <a href="about.html">About</a>
+      <a href="index.html#emi-calculator">EMI Calculator</a>
+      <a href="insurance.html">Insurance</a>
       <a href="loan.html">Financing</a>
-      <a href="index.html#faq">FAQ</a>
     </nav>
     <div class="header-actions">
       <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
@@ -67,6 +69,7 @@
         <div class="account-tabs">
           <button class="account-tab active" data-form="login">Log In</button>
           <button class="account-tab" data-form="signup">Sign Up</button>
+          <button class="account-tab" data-form="otp">Mobile OTP</button>
         </div>
 
         <form id="loginFormC" class="sell-form-card account-form active">
@@ -75,6 +78,23 @@
           <div class="field"><label>Password</label><input type="password" id="loginPassword" required></div>
           <p class="login-error" id="loginErrorC" style="display:none;color:#e14343;font-size:13px;"></p>
           <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">Log In</button>
+        </form>
+
+        <form id="otpFormC" class="sell-form-card account-form">
+          <h3>Log in with mobile OTP</h3>
+          <div class="field">
+            <label>Mobile Number</label>
+            <input type="tel" id="otpPhone" pattern="[0-9]{10}" placeholder="10-digit mobile number" required>
+          </div>
+          <button type="button" class="btn btn-outline" id="sendOtpBtn" style="width:100%;">Send OTP</button>
+
+          <div id="otpCodeField" style="display:none;margin-top:16px;">
+            <div class="field"><label>Enter OTP</label><input type="text" id="otpCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit code"></div>
+            <p id="otpDevNotice" style="display:none;font-size:12.5px;color:var(--slate-light);background:#F4F6FA;padding:8px 10px;border-radius:7px;"></p>
+            <button type="submit" class="btn btn-primary btn-lg" style="width:100%;margin-top:8px;">Verify &amp; Log In</button>
+            <button type="button" class="btn btn-outline" id="resendOtpBtn" style="width:100%;margin-top:8px;">Resend OTP</button>
+          </div>
+          <p class="login-error" id="otpErrorC" style="display:none;color:#e14343;font-size:13px;"></p>
         </form>
 
         <form id="signupFormC" class="sell-form-card account-form">
@@ -138,6 +158,7 @@
 </footer>
 
 <script src="admin/config.js"></script>
+<script src="js/floating-contact.js"></script>
 <script src="js/cars-data.js"></script>
 <script src="js/account.js"></script>
 </body>
