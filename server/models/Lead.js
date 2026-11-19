@@ -13,6 +13,11 @@ const leadSchema = new mongoose.Schema(
     fuel: { type: String, required: true },
     owners: { type: Number, default: 1 },
     valuation: { type: Number, required: true },
+    // What the car actually sold for once the deal closes. Comparing this
+    // against `valuation` over time is how the pricing engine gets smarter
+    // without redeploying code — the same idea behind Droom's OBV, just
+    // starting from our own transaction history instead of theirs.
+    actualSoldPrice: { type: Number, default: null },
     loanEligibility: {
       monthlyIncome: Number,
       eligibleAmount: Number,

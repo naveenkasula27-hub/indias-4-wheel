@@ -131,6 +131,11 @@ async function loadLeads() {
       <td>${l.name}<br><span style="color:var(--slate-light);font-size:12px;">${l.phone}</span></td>
       <td>${l.brand} ${l.model} · ${l.year} · ${l.km.toLocaleString('en-IN')} km</td>
       <td>₹ ${l.valuation.toLocaleString('en-IN')}</td>
+      <td style="white-space:nowrap;">
+        <input type="number" class="actual-sold-price" placeholder="₹ actual" style="width:100px;" value="${l.actualSoldPrice || ''}">
+        <button class="btn-sm btn-save" data-action="save-actual">Save</button>
+        ${l.actualSoldPrice ? `<div style="font-size:11px;color:${Math.abs(l.actualSoldPrice - l.valuation) / l.actualSoldPrice <= 0.08 ? 'var(--green,#1a9c4a)' : '#c0392b'};margin-top:2px;">${(((l.actualSoldPrice - l.valuation) / l.actualSoldPrice) * 100).toFixed(1)}% off</div>` : ''}
+      </td>
       <td>${l.loanEligibility ? `₹ ${l.loanEligibility.eligibleAmount.toLocaleString('en-IN')} @ ${l.loanEligibility.interestRate}%` : '—'}</td>
       <td style="white-space:nowrap;">
         <input type="number" class="elig-income" placeholder="Income ₹" style="width:90px;" value="${l.loanEligibility?.monthlyIncome || ''}">
@@ -146,12 +151,22 @@ async function loadLeads() {
         </select>
       </td>
     </tr>
-  `).join('') || '<tr><td colspan="6" style="color:var(--slate-light);">No leads yet.</td></tr>';
+  `).join('') || '<tr><td colspan="7" style="color:var(--slate-light);">No leads yet.</td></tr>';
 
   tbody.querySelectorAll('.lead-status').forEach((sel) => {
     sel.addEventListener('change', async (e) => {
       const row = e.target.closest('tr');
       await api(`/leads/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ status: e.target.value }) });
+      loadLeads();
+    });
+  });
+
+  tbody.querySelectorAll('button[data-action="save-actual"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      const price = +row.querySelector('.actual-sold-price').value;
+      if (!price) { alert('Enter the actual sold price first.'); return; }
+      await api(`/leads/${row.dataset.id}`, { method: 'PUT', body: JSON.stringify({ actualSoldPrice: price }) });
       loadLeads();
     });
   });
