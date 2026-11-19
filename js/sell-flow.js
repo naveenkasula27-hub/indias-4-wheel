@@ -41,10 +41,16 @@ const VARIANT_NAMES_BY_BRAND = {
 };
 const GENERIC_VARIANT_NAMES = ['Base', 'Mid', 'High', 'Top'];
 
+// Display-only on-road premium (road tax + insurance + registration,
+// blended into one figure) — never applied to the actual valuation math,
+// only to what's shown next to each variant so it reads as a real
+// purchase price. See brandCatalog.js's ON_ROAD_MULTIPLIER for why.
+const ON_ROAD_MULTIPLIER = 1.12;
+
 function fallbackListVariants(brand, model) {
   const basePrice = fallbackBasePrice(brand, model);
   const names = VARIANT_NAMES_BY_BRAND[brand] || GENERIC_VARIANT_NAMES;
-  return names.map((name, i) => ({ name, price: Math.round(basePrice * VARIANT_MULTIPLIERS[i] / 1000) * 1000 }));
+  return names.map((name, i) => ({ name, price: Math.round(basePrice * VARIANT_MULTIPLIERS[i] * ON_ROAD_MULTIPLIER / 1000) * 1000 }));
 }
 
 function fallbackVariantMultiplier(brand, variant) {

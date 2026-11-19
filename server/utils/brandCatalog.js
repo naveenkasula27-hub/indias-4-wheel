@@ -440,13 +440,24 @@ function multiplierForIndex(i, total) {
   return VARIANT_SPREAD_MIN + ((VARIANT_SPREAD_MAX - VARIANT_SPREAD_MIN) * i) / (total - 1);
 }
 
+// On-road premium over ex-showroom — road tax (varies by state, roughly
+// 7-20%), insurance and registration, blended into one flat figure rather
+// than itemised, since this is purely a display number to help a customer
+// recognise their own variant. It is NOT applied to the valuation math
+// below: the depreciation curve was calibrated against real resale
+// listings using the ex-showroom-equivalent price as the anchor, so
+// inflating that same anchor by the on-road premium would push every
+// resale quote ~12% too high across the board — reintroducing the exact
+// "valuation showing ₹1 lakh+ too much" bug fixed earlier this session.
+const ON_ROAD_MULTIPLIER = 1.12;
+
 function listVariants(brand, model) {
   if (!BRAND_CATALOG[brand] || !BRAND_CATALOG[brand].models[model]) return [];
   const names = getVariantNames(brand, model);
   const basePrice = BRAND_CATALOG[brand].models[model];
   return names.map((name, i) => ({
     name,
-    price: Math.round((basePrice * multiplierForIndex(i, names.length)) / 1000) * 1000,
+    price: Math.round((basePrice * multiplierForIndex(i, names.length) * ON_ROAD_MULTIPLIER) / 1000) * 1000,
   }));
 }
 
