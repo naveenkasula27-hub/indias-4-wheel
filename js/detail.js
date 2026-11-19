@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function refreshSavedState() {
     if (!customerToken || !apiBase) return;
     try {
-      const res = await fetch(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${customerToken}` } });
+      const res = await fetchWithTimeout(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${customerToken}` } });
       if (!res.ok) return;
       const data = await res.json();
       saved = data.savedCars.some((c) => c._id === car.id);
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     const method = saved ? 'DELETE' : 'POST';
-    await fetch(`${apiBase}/customer/saved-cars/${car.id}`, { method, headers: { Authorization: `Bearer ${customerToken}` } });
+    await fetchWithTimeout(`${apiBase}/customer/saved-cars/${car.id}`, { method, headers: { Authorization: `Bearer ${customerToken}` } });
     saved = !saved;
     saveBtn.textContent = saved ? '♥ Saved' : '♡ Save';
     saveBtn.classList.toggle('active', saved);
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     try {
       if (!apiBase) throw new Error('offline');
-      await fetch(`${apiBase}/test-drives`, {
+      await fetchWithTimeout(`${apiBase}/test-drives`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, phone, carId: car.id, carName: car.name }),
       });

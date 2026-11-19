@@ -186,7 +186,7 @@ document.getElementById('insuranceForm').addEventListener('submit', async (e) =>
     const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
     if (!apiBase) throw new Error('The backend isn\'t reachable right now — please try again shortly.');
 
-    const res = await fetch(`${apiBase}/insurance`, {
+    const res = await fetchWithTimeout(`${apiBase}/insurance`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

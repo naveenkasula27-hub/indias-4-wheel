@@ -128,6 +128,10 @@ function fallbackLoanEligibility({ carPrice, monthlyIncome, existingEmis = 0, em
   return { eligibleAmount, interestRate, emi, tenureMonths };
 }
 
+// fetchWithTimeout is defined globally in admin/config.js (loaded before
+// this file on every page) — cold-start-tolerant, aborts and falls back
+// instead of leaving a dropdown stuck on "Loading..." for 8-10+ seconds.
+
 document.addEventListener('DOMContentLoaded', async () => {
 
   const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
@@ -137,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let brandList = Object.keys(FALLBACK_CATALOG).sort();
   try {
     if (!apiBase) throw new Error('no api');
-    const res = await fetch(`${apiBase}/valuation/catalog/brands`);
+    const res = await fetchWithTimeout(`${apiBase}/valuation/catalog/brands`, {}, 4000);
     if (!res.ok) throw new Error('api failed');
     const apiBrands = await res.json();
     if (Array.isArray(apiBrands) && apiBrands.length) brandList = apiBrands;
@@ -156,7 +160,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     modelSelect.innerHTML = '<option value="">Loading models...</option>';
     try {
       if (!apiBase) throw new Error('no api');
-      const res = await fetch(`${apiBase}/valuation/catalog/models/${encodeURIComponent(brand)}`);
+      const res = await fetchWithTimeout(`${apiBase}/valuation/catalog/models/${encodeURIComponent(brand)}`, {}, 4000);
       if (!res.ok) throw new Error('api failed');
       const apiModels = await res.json();
       if (Array.isArray(apiModels) && apiModels.length) models = apiModels;
@@ -187,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     variantSelect.innerHTML = '<option value="">Loading variants...</option>';
     try {
       if (!apiBase) throw new Error('no api');
-      const res = await fetch(`${apiBase}/valuation/catalog/variants/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`);
+      const res = await fetchWithTimeout(`${apiBase}/valuation/catalog/variants/${encodeURIComponent(brand)}/${encodeURIComponent(model)}`, {}, 4000);
       if (!res.ok) throw new Error('api failed');
       const apiVariants = await res.json();
       if (Array.isArray(apiVariants) && apiVariants.length) variants = apiVariants;
@@ -264,11 +268,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let result;
     try {
       if (!apiBase) throw new Error('no api');
-      const res = await fetch(`${apiBase}/valuation`, {
+      const res = await fetchWithTimeout(`${apiBase}/valuation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ brand, model, variant, year, km, fuel, owners, city }),
-      });
+      }, 8000);
       if (!res.ok) throw new Error('api failed');
       result = await res.json();
     } catch {
@@ -303,11 +307,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     let loan;
     try {
       if (!apiBase) throw new Error('no api');
-      const res = await fetch(`${apiBase}/loan/eligibility`, {
+      const res = await fetchWithTimeout(`${apiBase}/loan/eligibility`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-      });
+      }, 8000);
       if (!res.ok) throw new Error('api failed');
       loan = await res.json();
     } catch {
@@ -343,11 +347,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
       if (apiBase) {
-        await fetch(`${apiBase}/leads`, {
+        await fetchWithTimeout(`${apiBase}/leads`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-        });
+        }, 8000);
       }
     } catch {
       // Backend unreachable — still show confirmation; lead simply isn't saved server-side.

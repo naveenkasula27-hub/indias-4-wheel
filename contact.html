@@ -126,7 +126,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e) => {
 
   try {
     if (!apiBase) throw new Error('offline');
-    const res = await fetch(`${apiBase}/contact`, {
+    const res = await fetchWithTimeout(`${apiBase}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, message }),

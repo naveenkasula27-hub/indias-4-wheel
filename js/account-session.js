@@ -7,7 +7,7 @@ function i4wGetSavedCarIds() {
   const apiBase = typeof API_BASE !== 'undefined' ? API_BASE : null;
   if (!token || !apiBase) return Promise.resolve(new Set());
   if (!i4wSavedCarIdsPromise) {
-    i4wSavedCarIdsPromise = fetch(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${token}` } })
+    i4wSavedCarIdsPromise = fetchWithTimeout(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => (r.ok ? r.json() : { savedCars: [] }))
       .then((data) => new Set(data.savedCars.map((c) => c._id)))
       .catch(() => new Set());
@@ -32,7 +32,7 @@ async function i4wInitSaveButtons(root = document) {
       if (!token) { window.location.href = 'account.html'; return; }
       const isSaved = btn.classList.contains('active');
       const method = isSaved ? 'DELETE' : 'POST';
-      await fetch(`${apiBase}/customer/saved-cars/${carId}`, { method, headers: { Authorization: `Bearer ${token}` } });
+      await fetchWithTimeout(`${apiBase}/customer/saved-cars/${carId}`, { method, headers: { Authorization: `Bearer ${token}` } });
       btn.classList.toggle('active', !isSaved);
       btn.textContent = isSaved ? '♡' : '♥';
       if (isSaved) saved.delete(carId); else saved.add(carId);

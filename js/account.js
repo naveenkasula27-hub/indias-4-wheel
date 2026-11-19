@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorEl.style.display = 'none';
     try {
       if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
-      const res = await fetch(`${apiBase}/customer/login`, {
+      const res = await fetchWithTimeout(`${apiBase}/customer/login`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: document.getElementById('loginEmail').value, password: document.getElementById('loginPassword').value }),
       });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorEl.style.display = 'none';
     try {
       if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
-      const res = await fetch(`${apiBase}/customer/signup`, {
+      const res = await fetchWithTimeout(`${apiBase}/customer/signup`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: document.getElementById('suName').value,
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     try {
       if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
-      const res = await fetch(`${apiBase}/customer/otp/request`, {
+      const res = await fetchWithTimeout(`${apiBase}/customer/otp/request`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone }),
       });
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorEl.style.display = 'none';
     try {
       if (!apiBase) throw new Error('The backend isn\'t reachable right now.');
-      const res = await fetch(`${apiBase}/customer/otp/verify`, {
+      const res = await fetchWithTimeout(`${apiBase}/customer/otp/verify`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone: document.getElementById('otpPhone').value, code: document.getElementById('otpCode').value }),
       });
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadProfile() {
     try {
-      const res = await fetch(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetchWithTimeout(`${apiBase}/customer/me`, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error('session expired');
       const data = await res.json();
 

@@ -137,7 +137,7 @@ async function loadCars() {
 
   try {
     if (typeof API_BASE === 'undefined') throw new Error('no api base');
-    const res = await fetch(`${API_BASE}/cars`);
+    const res = typeof fetchWithTimeout === 'function' ? await fetchWithTimeout(`${API_BASE}/cars`, {}, 5000) : await fetch(`${API_BASE}/cars`);
     if (!res.ok) throw new Error('api failed');
     const data = await res.json();
     if (!Array.isArray(data) || data.length === 0) throw new Error('empty');

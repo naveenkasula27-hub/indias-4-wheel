@@ -1,5 +1,9 @@
 // ============ STANDALONE LOAN ELIGIBILITY PAGE ============
 
+// fetchWithTimeout is defined globally in admin/config.js (loaded before
+// this file) — cold-start-tolerant, falls back instead of leaving the
+// submit button stuck for 8-10+ seconds.
+
 function fallbackLoanEligibility({ carPrice, downPayment = 0, monthlyIncome, existingEmis = 0, employmentType = 'salaried', creditScoreBand = '750+', tenureMonths = 60 }) {
   const loanRequired = Math.max(0, carPrice - downPayment);
   const foirCap = employmentType === 'salaried' ? 0.55 : 0.45;
@@ -37,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let result;
     try {
       if (!apiBase) throw new Error('no api');
-      const res = await fetch(`${apiBase}/loan/eligibility`, {
+      const res = await fetchWithTimeout(`${apiBase}/loan/eligibility`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
