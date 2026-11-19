@@ -3,8 +3,9 @@ const Lead = require('../models/Lead');
 const { requireAuth } = require('../middleware/auth');
 const { estimateValuation } = require('../utils/valuation');
 const { checkEligibility } = require('../utils/loan');
-const { getBasePrice, getVariantMultiplier } = require('../utils/brandCatalog');
+const { getBasePrice } = require('../utils/brandCatalog');
 const PriceOverride = require('../models/PriceOverride');
+const { resolveVariantMultiplier } = require('../utils/variantResolver');
 
 const router = express.Router();
 
@@ -17,7 +18,10 @@ router.post('/', async (req, res) => {
 
   const override = await PriceOverride.findOne({ brand, model });
   let basePriceOverride = override ? override.basePrice : getBasePrice(brand, model);
-  if (variant) basePriceOverride = Math.round((basePriceOverride * getVariantMultiplier(brand, model, variant)) / 1000) * 1000;
+  if (variant) {
+    const variantMultiplier = await resolveVariantMultiplier(brand, model, variant);
+    basePriceOverride = Math.round((basePriceOverride * variantMultiplier) / 1000) * 1000;
+  }
   const valuationResult = estimateValuation({ brand, model, year, km, fuel, owners, city, basePriceOverride });
 
   let loanEligibility;

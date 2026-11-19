@@ -20,13 +20,14 @@ async function api(path, opts = {}) {
 }
 
 // --- Tabs ---
-const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', recalibration: 'Recalibration Report', account: 'Account' };
+const TAB_TITLES = { inventory: 'Manage Inventory', leads: 'Sell-Car Leads', testdrives: 'Test Drives', messages: 'Contact Messages', pricing: 'Valuation Pricing', variants: 'Variant Pricing', recalibration: 'Recalibration Report', account: 'Account' };
 const TAB_SUBS = {
   inventory: 'Live overview of your listings, leads and pricing',
   leads: 'New sell-car submissions arrive here automatically — no refresh needed',
   testdrives: 'Test drive requests from buyers browsing your inventory',
   messages: 'Messages submitted through the Contact Us page',
   pricing: 'Override any model\'s starting valuation price instantly',
+  variants: 'Correct any specific variant\'s on-road price shown to customers',
   recalibration: 'Built from real sold prices you\'ve logged against each lead',
   account: 'Manage your admin login',
 };
@@ -36,12 +37,13 @@ document.querySelectorAll('.nav-link').forEach((link) => {
     document.querySelectorAll('.nav-link').forEach((l) => l.classList.remove('active'));
     link.classList.add('active');
     const tab = link.dataset.tab;
-    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'recalibration', 'account'].forEach((t) => {
+    ['inventory', 'leads', 'testdrives', 'messages', 'pricing', 'variants', 'recalibration', 'account'].forEach((t) => {
       document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
     });
     document.getElementById('pageTitle').textContent = TAB_TITLES[tab];
     document.getElementById('pageSub').innerHTML = `<span class="live-dot"></span>${TAB_SUBS[tab] || ''}`;
     if (tab === 'pricing') loadPricing();
+    if (tab === 'variants') loadVariantPricing();
     if (tab === 'testdrives') loadTestDrives();
     if (tab === 'messages') loadMessages();
     if (tab === 'recalibration') loadRecalibration();
@@ -348,6 +350,52 @@ function renderPricing(rows) {
 document.getElementById('pricingSearch')?.addEventListener('input', (e) => {
   const q = e.target.value.trim().toLowerCase();
   renderPricing(pricingRows.filter((r) => `${r.brand} ${r.model}`.toLowerCase().includes(q)));
+});
+
+// --- Variant pricing ---
+let variantRows = [];
+async function loadVariantPricing() {
+  variantRows = await api('/valuation/catalog/variant-prices').catch(() => []);
+  const q = document.getElementById('variantSearch')?.value.trim().toLowerCase() || '';
+  renderVariantPricing(q ? variantRows.filter((r) => `${r.brand} ${r.model} ${r.variant}`.toLowerCase().includes(q)) : variantRows);
+}
+
+function renderVariantPricing(rows) {
+  const tbody = document.getElementById('variantTableBody');
+  tbody.innerHTML = rows.map((r) => `
+    <tr data-brand="${r.brand}" data-model="${r.model}" data-variant="${r.variant}">
+      <td>${r.brand}</td>
+      <td>${r.model}</td>
+      <td>${r.variant}</td>
+      <td>₹ ${r.defaultPrice.toLocaleString('en-IN')}</td>
+      <td><input type="number" class="variant-price-input" value="${r.currentPrice}" style="width:120px;"></td>
+      <td style="white-space:nowrap;">
+        <button class="btn-sm btn-save" data-action="save-variant-price">Save</button>
+        ${r.overridden ? '<button class="btn-sm btn-del" data-action="reset-variant-price">Reset</button>' : ''}
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="color:var(--slate-light);">No variants found.</td></tr>';
+
+  tbody.querySelectorAll('button[data-action="save-variant-price"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      const price = +row.querySelector('.variant-price-input').value;
+      await api('/valuation/catalog/variant-prices', { method: 'PUT', body: JSON.stringify({ brand: row.dataset.brand, model: row.dataset.model, variant: row.dataset.variant, price }) });
+      loadVariantPricing();
+    });
+  });
+  tbody.querySelectorAll('button[data-action="reset-variant-price"]').forEach((btn) => {
+    btn.addEventListener('click', async (e) => {
+      const row = e.target.closest('tr');
+      await api('/valuation/catalog/variant-prices', { method: 'DELETE', body: JSON.stringify({ brand: row.dataset.brand, model: row.dataset.model, variant: row.dataset.variant }) });
+      loadVariantPricing();
+    });
+  });
+}
+
+document.getElementById('variantSearch')?.addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  renderVariantPricing(variantRows.filter((r) => `${r.brand} ${r.model} ${r.variant}`.toLowerCase().includes(q)));
 });
 
 // --- Recalibration report ---

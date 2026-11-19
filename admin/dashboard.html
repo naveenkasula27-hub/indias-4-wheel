@@ -20,6 +20,7 @@
         <a href="#testdrives" class="nav-link" data-tab="testdrives">Test Drives</a>
         <a href="#messages" class="nav-link" data-tab="messages">Contact Messages</a>
         <a href="#pricing" class="nav-link" data-tab="pricing">Valuation Pricing</a>
+        <a href="#variants" class="nav-link" data-tab="variants">Variant Pricing</a>
         <a href="#recalibration" class="nav-link" data-tab="recalibration">Recalibration Report</a>
         <a href="#account" class="nav-link" data-tab="account">Account</a>
       </nav>
@@ -144,6 +145,21 @@
           <table class="admin-table">
             <thead><tr><th>Brand</th><th>Model</th><th>Default Price</th><th>Current Price</th><th></th></tr></thead>
             <tbody id="pricingTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VARIANT PRICING TAB -->
+      <section id="tab-variants" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-head">
+            <h3>Variant Prices</h3>
+            <input id="variantSearch" placeholder="Search brand, model or variant..." style="padding:8px 12px;border:1px solid var(--line);border-radius:7px;font-size:13px;width:260px;">
+          </div>
+          <p style="color:var(--slate-light);font-size:13px;margin:0 0 14px;">This is the on-road price (ex-showroom + road tax + insurance, already blended in) shown to a customer next to each variant in the Sell Car flow. Editing it also corrects that variant's resale valuation.</p>
+          <table class="admin-table">
+            <thead><tr><th>Brand</th><th>Model</th><th>Variant</th><th>Default Price</th><th>Current Price</th><th></th></tr></thead>
+            <tbody id="variantTableBody"></tbody>
           </table>
         </div>
       </section>

@@ -481,5 +481,5 @@ function getVariantMultiplier(brand, model, variant) {
 
 module.exports = {
   BRAND_CATALOG, listBrands, listModels, getBasePrice, isLuxuryBrand, getResaleTier,
-  listVariants, getVariantMultiplier,
+  listVariants, getVariantMultiplier, getVariantNames, onRoadMultiplier,
 };
