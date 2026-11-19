@@ -5,3 +5,12 @@
 .legal-wrap p,.legal-wrap li{color:var(--slate);font-size:15px;line-height:1.7;}
 .legal-wrap ul{padding-left:20px;margin:8px 0;}
 .legal-wrap a{color:var(--orange);}
+
+.founder-wrap{display:flex;gap:28px;align-items:center;margin:28px 0 36px;padding:24px;background:#F4F6FA;border-radius:16px;}
+.founder-photo{width:180px;height:180px;object-fit:cover;object-position:top center;border-radius:14px;box-shadow:var(--shadow-md);flex-shrink:0;}
+.founder-bio{flex:1;min-width:0;}
+.founder-title{color:var(--orange);font-weight:700;font-size:14px;margin:0 0 10px;}
+@media (max-width:640px){
+  .founder-wrap{flex-direction:column;text-align:center;padding:20px;}
+  .founder-photo{width:140px;height:140px;}
+}
