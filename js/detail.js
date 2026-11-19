@@ -74,10 +74,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     return Math.round((principal * r * factor) / (factor - 1));
   }
 
+  // Number inputs are the source of truth — a range input snaps its own
+  // .value to the nearest `step` even when set from JS, which would
+  // silently round away an exact typed rate/tenure if read from the slider.
   function updateEmi() {
     const downAmount = Math.min(+downInput.value || 0, car.price);
-    const rate = +rateSlider.value;
-    const tenure = +tenureSlider.value;
+    const rate = +rateInput.value || 0;
+    const tenure = +tenureInput.value || 0;
     const downPct = car.price > 0 ? Math.round((downAmount / car.price) * 100) : 0;
     const loanAmount = Math.max(0, car.price - downAmount);
     const emi = computeEmi(loanAmount, rate, tenure);

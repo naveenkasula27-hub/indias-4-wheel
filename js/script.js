@@ -159,15 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.round((principal * r * factor) / (factor - 1));
   }
 
-  // Down payment is kept in ₹ (typed exactly) with the slider showing the
-  // nearest round % equivalent for a quick visual, instead of the other
-  // way around — typing "1,70,000" should always win over a 5%-step drag.
+  // The number inputs are the source of truth for the actual computation —
+  // a native range input silently snaps its own .value to the nearest
+  // `step` even when set from JS, so reading from the sliders here would
+  // quietly round away whatever exact number was typed (e.g. 12,34,000
+  // becoming 12,50,000). Sliders only drive the typed inputs, never vice versa.
   function updateHomeEmi() {
     if (!hPrice) return;
-    const price = +hPrice.value;
+    const price = +hPriceInput.value || 0;
     const downAmount = Math.min(+hDownInput.value || 0, price);
-    const rate = +hRate.value;
-    const tenure = +hTenure.value;
+    const rate = +hRateInput.value || 0;
+    const tenure = +hTenureInput.value || 0;
     const downPct = price > 0 ? Math.round((downAmount / price) * 100) : 0;
     const emi = computeEmi(Math.max(0, price - downAmount), rate, tenure);
 
